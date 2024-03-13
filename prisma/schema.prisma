@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+  EMPLOYEE
+}
+
+enum MediaType {
+  CATEGORY
+  SELFIE
+  ID
+}
+
+enum Status {
+  PENDING
+  VALID
+  REFUSED
+}
+
+model User {
+  id           Int          @id @default(autoincrement())
+  email        String       @unique
+  password     String
+  profile      ProfileUser?
+  current_role Role
+
+  @@map("users")
+}
+
+model Client {
+  id         Int          @id @default(autoincrement())
+  first_name String       @unique
+  last_name  String       @unique
+  phone      String
+  profile    ProfileUser?
+
+  @@map("clients")
+}
+
+model Employee {
+  id          Int          @id @default(autoincrement())
+  first_name  String       @unique
+  last_name   String       @unique
+  phone       String
+  state_id    Int
+  province_id Int
+  category_id Int
+  is_active   Boolean
+  status      Status       @default(PENDING)
+  profile     ProfileUser?
+  state       State        @relation(fields: [state_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  province    Province     @relation(fields: [province_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  category    Category     @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  media       Media[]
+
+  @@map("employees")
+}
+
+model ProfileUser {
+  user_id     Int       @unique
+  user        User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  client_id   Int?      @unique
+  client      Client?   @relation(fields: [client_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  employee_id Int?      @unique
+  employee    Employee? @relation(fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("profile_user")
+}
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  name        String
+  profession  String
+  description String
+  employees   Employee[]
+  media       Media[]
+
+  @@map("categories")
+}
+
+model Media {
+  id         Int        @id @default(autoincrement())
+  name       String
+  path       String
+  type       MediaType
+  employees  Employee[]
+  categories Category[]
+
+  @@map("media")
+}
+
+model State {
+  id        Int        @id @default(autoincrement())
+  code      Int
+  name      String
+  name_ar   String
+  provinces Province[]
+  employees Employee[]
+
+  @@map("states")
+}
+
+model Province {
+  id           Int        @id @default(autoincrement())
+  code         Int
+  name         String
+  name_ar      String
+  city_name    String
+  city_name_ar String
+  state_id     Int
+  state        State      @relation(fields: [state_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  employees    Employee[]
+
+  @@map("provinces")
+}
