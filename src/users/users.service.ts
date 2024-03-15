@@ -4,6 +4,10 @@ import { Prisma } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDTO } from './Dtos/login.dto';
+import {
+  CreateClientProfileDto,
+  CreateEmployeeProfileDto,
+} from './Dtos/profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -63,5 +67,33 @@ export class UsersService {
         email: user.email,
       }),
     };
+  }
+
+  async createClientProfile(
+    user_id: number,
+    client_data: CreateClientProfileDto,
+  ) {
+    const client = await this.prisma.client.create({
+      data: client_data,
+    });
+
+    await this.prisma.profileUser.create({
+      data: { user_id: user_id, client_id: client.id },
+    });
+    return client;
+  }
+
+  async createEmployeeProfile(
+    user_id: number,
+    employee_data: CreateEmployeeProfileDto,
+  ) {
+    const client = await this.prisma.employee.create({
+      data: { ...employee_data, is_active: false, status: 'PENDING' },
+    });
+
+    await this.prisma.profileUser.create({
+      data: { user_id: user_id, employee_id: client.id },
+    });
+    return client;
   }
 }

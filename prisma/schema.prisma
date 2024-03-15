@@ -116,7 +116,6 @@ model State {
 
 model Province {
   id           Int        @id @default(autoincrement())
-  code         Int
   name         String
   name_ar      String
   city_name    String
