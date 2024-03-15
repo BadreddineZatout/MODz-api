@@ -1,4 +1,11 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  Put,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma } from '@prisma/client';
 import { LoginDTO } from './Dtos/login.dto';
@@ -6,6 +13,8 @@ import {
   CreateClientProfileDto,
   CreateEmployeeProfileDto,
   CreateProfileDto,
+  UpdateClientProfileDto,
+  UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
 
 @Controller()
@@ -37,5 +46,14 @@ export class UsersController {
       data.user_id,
       data.data as CreateEmployeeProfileDto,
     );
+  }
+
+  @Put('/:id/update-profile')
+  updateProfile(
+    @Param('id', ParseIntPipe) id: number,
+    @Body()
+    data: UpdateClientProfileDto | UpdateEmployeeProfileDto,
+  ) {
+    return this.usersService.updateProfile(id, data);
   }
 }

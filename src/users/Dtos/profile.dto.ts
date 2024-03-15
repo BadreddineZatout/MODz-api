@@ -31,3 +31,18 @@ export class CreateEmployeeProfileDto {
   @IsNotEmpty()
   category_id: number;
 }
+
+export class UpdateClientProfileDto {
+  first_name: string;
+  last_name: string;
+  phone: string;
+}
+
+export class UpdateEmployeeProfileDto {
+  first_name: string;
+  last_name: string;
+  phone: string;
+  state_id: number;
+  province_id: number;
+  category_id: number;
+}

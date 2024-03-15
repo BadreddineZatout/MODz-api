@@ -7,7 +7,10 @@ import { LoginDTO } from './Dtos/login.dto';
 import {
   CreateClientProfileDto,
   CreateEmployeeProfileDto,
+  UpdateClientProfileDto,
+  UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
+import { profile } from 'console';
 
 @Injectable()
 export class UsersService {
@@ -95,5 +98,41 @@ export class UsersService {
       data: { user_id: user_id, employee_id: client.id },
     });
     return client;
+  }
+
+  async updateProfile(
+    user_id: number,
+    data: UpdateClientProfileDto | UpdateEmployeeProfileDto,
+  ) {
+    if (!data) {
+      throw new HttpException(
+        {
+          message: ['Missing data'],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const user = await this.prisma.user.findFirst({
+      where: { id: user_id },
+      include: {
+        profile: {
+          include: {
+            client: true,
+            employee: true,
+          },
+        },
+      },
+    });
+    if (user.current_role == 'CLIENT') {
+      return this.prisma.client.update({
+        where: { id: user.profile.client_id },
+        data: data as UpdateClientProfileDto,
+      });
+    }
+
+    return this.prisma.employee.update({
+      where: { id: user.profile.employee_id },
+      data: data as UpdateEmployeeProfileDto,
+    });
   }
 }
