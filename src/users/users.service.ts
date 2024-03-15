@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Prisma } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { LoginDTO } from './Dtos/login.dto';
 
 @Injectable()
 export class UsersService {
@@ -16,6 +17,41 @@ export class UsersService {
       },
     });
 
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        current_role: user.current_role,
+      },
+      token: await this.jwtService.signAsync({
+        sub: user.id,
+        email: user.email,
+      }),
+    };
+  }
+
+  async login(data: LoginDTO) {
+    const user = await this.prisma.user.findFirst({
+      where: { email: data.email },
+    });
+    if (!user) {
+      throw new HttpException(
+        {
+          message: ['This Email does not exist'],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const isMatch = await bcrypt.compare(data.password, user.password);
+    if (!isMatch) {
+      throw new HttpException(
+        {
+          message: ['Wrong Password'],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return {
       user: {
         id: user.id,
