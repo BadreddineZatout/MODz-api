@@ -5,6 +5,7 @@ import {
   Param,
   Put,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma } from '@prisma/client';
@@ -16,6 +17,7 @@ import {
   UpdateClientProfileDto,
   UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
+import { AuthGuard } from './auth.guard';
 
 @Controller()
 export class UsersController {
@@ -32,6 +34,7 @@ export class UsersController {
   }
 
   @Post('/create-profile')
+  @UseGuards(AuthGuard)
   createProfile(
     @Body()
     data: CreateProfileDto,
@@ -49,6 +52,7 @@ export class UsersController {
   }
 
   @Put('/:id/update-profile')
+  @UseGuards(AuthGuard)
   updateProfile(
     @Param('id', ParseIntPipe) id: number,
     @Body()
