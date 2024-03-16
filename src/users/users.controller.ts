@@ -6,6 +6,8 @@ import {
   Put,
   ParseIntPipe,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma } from '@prisma/client';
@@ -18,6 +20,9 @@ import {
   UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
 import { AuthGuard } from './auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { getStorageConfig } from 'src/utils/storage';
 
 @Controller()
 export class UsersController {
@@ -59,5 +64,25 @@ export class UsersController {
     data: UpdateClientProfileDto | UpdateEmployeeProfileDto,
   ) {
     return this.usersService.updateProfile(id, data);
+  }
+
+  @Post('/:id/upload-selfie')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: getStorageConfig('public/selfies'),
+    }),
+  )
+  uploadSelfie(@UploadedFile() file: Express.Multer.File) {
+    return `File ${file.originalname} Uploaded Successfully`;
+  }
+
+  @Post('/:id/upload-id')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(
+    FileInterceptor('file', { storage: getStorageConfig('public/ids') }),
+  )
+  uploadId(@UploadedFile() file: Express.Multer.File) {
+    return `File ${file.originalname} Uploaded Successfully`;
   }
 }
