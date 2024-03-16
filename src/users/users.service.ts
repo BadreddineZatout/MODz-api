@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { Prisma } from '@prisma/client';
+import { MediaType, Prisma } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDTO } from './Dtos/login.dto';
@@ -10,7 +10,6 @@ import {
   UpdateClientProfileDto,
   UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
-import { profile } from 'console';
 
 @Injectable()
 export class UsersService {
@@ -133,6 +132,32 @@ export class UsersService {
     return this.prisma.employee.update({
       where: { id: user.profile.employee_id },
       data: data as UpdateEmployeeProfileDto,
+    });
+  }
+
+  async saveMedia(id: number, file: Express.Multer.File, type: MediaType) {
+    const media = await this.prisma.media.create({
+      data: {
+        name: file.filename,
+        path: file.destination + '/' + file.filename,
+        type: type,
+      },
+    });
+    const profile = await this.prisma.profileUser.findFirst({
+      where: { user_id: id },
+      include: {
+        employee: true,
+      },
+    });
+    await this.prisma.employee.update({
+      where: { id: profile.employee_id },
+      data: {
+        media: {
+          connect: {
+            id: media.id,
+          },
+        },
+      },
     });
   }
 }

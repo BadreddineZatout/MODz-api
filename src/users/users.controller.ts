@@ -73,7 +73,11 @@ export class UsersController {
       storage: getStorageConfig('public/selfies'),
     }),
   )
-  uploadSelfie(@UploadedFile() file: Express.Multer.File) {
+  uploadSelfie(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    this.usersService.saveMedia(id, file, 'SELFIE');
     return `File ${file.originalname} Uploaded Successfully`;
   }
 
@@ -82,7 +86,11 @@ export class UsersController {
   @UseInterceptors(
     FileInterceptor('file', { storage: getStorageConfig('public/ids') }),
   )
-  uploadId(@UploadedFile() file: Express.Multer.File) {
+  uploadId(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    this.usersService.saveMedia(id, file, 'ID');
     return `File ${file.originalname} Uploaded Successfully`;
   }
 }
