@@ -19,9 +19,8 @@ import {
   UpdateClientProfileDto,
   UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
-import { AuthGuard } from './auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { getStorageConfig } from 'src/utils/storage';
 
 @Controller()
@@ -92,5 +91,14 @@ export class UsersController {
   ) {
     this.usersService.saveMedia(id, file, 'ID');
     return `File ${file.originalname} Uploaded Successfully`;
+  }
+
+  @Post('/:id/reset-password')
+  @UseGuards(AuthGuard)
+  resetPassword(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: { password: string },
+  ) {
+    return this.usersService.resetPassword(id, data.password);
   }
 }

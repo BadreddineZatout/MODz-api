@@ -123,13 +123,13 @@ export class UsersService {
       },
     });
     if (user.current_role == 'CLIENT') {
-      return this.prisma.client.update({
+      return await this.prisma.client.update({
         where: { id: user.profile.client_id },
         data: data as UpdateClientProfileDto,
       });
     }
 
-    return this.prisma.employee.update({
+    return await this.prisma.employee.update({
       where: { id: user.profile.employee_id },
       data: data as UpdateEmployeeProfileDto,
     });
@@ -159,5 +159,15 @@ export class UsersService {
         },
       },
     });
+  }
+
+  async resetPassword(id: number, password: string) {
+    await this.prisma.user.update({
+      where: { id: id },
+      data: {
+        password: bcrypt.hashSync(password, 8),
+      },
+    });
+    return { message: 'Password reset' };
   }
 }
