@@ -24,7 +24,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         },
       },
       defaults: {
-        from: '"MODZ" <damaris55@ethereal.email>', // Sender email address
+        from: `"MODZ" <${process.env.MAIL_USER}>`, // Sender email address
       },
       template: {
         dir: 'src/email-templates', // Path to your email templates directory

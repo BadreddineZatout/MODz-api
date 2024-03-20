@@ -11,6 +11,7 @@ import {
   UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import moment from 'moment';
 
 @Injectable()
 export class UsersService {
@@ -166,21 +167,34 @@ export class UsersService {
     });
   }
 
-  async confirmEmail(email: string) {
+  async sendConfirmEmail(id: number, email: string) {
+    const code = this.generateRandomNumber();
+    const token = await this.jwtService.signAsync({
+      sub: id,
+      email: email,
+    });
     await this.mailerService.sendMail({
       to: email,
       subject: 'Confirm Your Email',
       template: 'confirmation', // Name of your email template file without extension
       context: {
-        code: this.generateRandomNumber(),
+        code,
       },
     });
+    return {
+      code,
+      token,
+    };
   }
 
-  private generateRandomNumber() {
-    const min = 100000; // Minimum 6-digit number
-    const max = 999999; // Maximum 6-digit number
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  async verifyEmail(id: number) {
+    await this.prisma.user.update({
+      where: { id: id },
+      data: {
+        verfied_at: moment().toNow(),
+      },
+    });
+    return { message: 'Password reset' };
   }
 
   async resetPassword(id: number, password: string) {
@@ -191,5 +205,11 @@ export class UsersService {
       },
     });
     return { message: 'Password reset' };
+  }
+
+  private generateRandomNumber() {
+    const min = 100000; // Minimum 6-digit number
+    const max = 999999; // Maximum 6-digit number
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }

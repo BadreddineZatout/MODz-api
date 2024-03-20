@@ -22,6 +22,7 @@ import {
 import { AuthGuard } from './guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { getStorageConfig } from 'src/utils/storage';
+import { ConfirmEmailGuard } from './guards/confirm-email.guard';
 
 @Controller()
 export class UsersController {
@@ -94,11 +95,20 @@ export class UsersController {
   }
 
   @Post('/:id/confirm-email')
-  confirmEmail(
+  sendConfirmEmail(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: { email: string },
   ) {
-    return this.usersService.confirmEmail(data.email);
+    return this.usersService.sendConfirmEmail(id, data.email);
+  }
+
+  @Post('/:id/verify-email')
+  @UseGuards(ConfirmEmailGuard)
+  verifyEmail(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: { email: string },
+  ) {
+    return this.usersService.verifyEmail(id);
   }
 
   @Post('/:id/forgot-password')
