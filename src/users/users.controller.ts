@@ -93,6 +93,23 @@ export class UsersController {
     return `File ${file.originalname} Uploaded Successfully`;
   }
 
+  @Post('/:id/confirm-email')
+  confirmEmail(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: { email: string },
+  ) {
+    return this.usersService.confirmEmail(data.email);
+  }
+
+  @Post('/:id/forgot-password')
+  @UseGuards(AuthGuard)
+  forgotPassword(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: { password: string },
+  ) {
+    return this.usersService.resetPassword(id, data.password);
+  }
+
   @Post('/:id/reset-password')
   @UseGuards(AuthGuard)
   resetPassword(
