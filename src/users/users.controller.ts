@@ -23,6 +23,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { getStorageConfig } from 'src/utils/storage';
 import { ConfirmEmailGuard } from './guards/confirm-email.guard';
+import { ResetPasswordGuard } from './guards/reset-password.guard';
 
 @Controller()
 export class UsersController {
@@ -111,21 +112,14 @@ export class UsersController {
     return this.usersService.verifyEmail(id, data.email);
   }
 
-  @Post('/:id/forgot-password')
-  @UseGuards(AuthGuard)
-  forgotPassword(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() data: { password: string },
-  ) {
-    return this.usersService.resetPassword(id, data.password);
+  @Post('/forgot-password')
+  forgotPassword(@Body() data: { email: string }) {
+    return this.usersService.sendResetEmail(data.email);
   }
 
-  @Post('/:id/reset-password')
-  @UseGuards(AuthGuard)
-  resetPassword(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() data: { password: string },
-  ) {
-    return this.usersService.resetPassword(id, data.password);
+  @Post('/reset-password')
+  @UseGuards(ResetPasswordGuard)
+  resetPassword(@Body() data: { email: string; password: string }) {
+    return this.usersService.resetPassword(data.email, data.password);
   }
 }

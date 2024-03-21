@@ -197,9 +197,39 @@ export class UsersService {
     return { message: `Email ${email} confirmed successfully` };
   }
 
-  async resetPassword(id: number, password: string) {
+  async sendResetEmail(email: string) {
+    const user = await this.prisma.user.findFirst({ where: { email: email } });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          message: ['No user found for this email'],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const code = this.generateRandomNumber();
+    const token = await this.jwtService.signAsync({
+      sub: email,
+    });
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Reset Your Password',
+      template: 'password-reset', // Name of your email template file without extension
+      context: {
+        code,
+      },
+    });
+    return {
+      code,
+      token,
+    };
+  }
+
+  async resetPassword(email: string, password: string) {
     await this.prisma.user.update({
-      where: { id: id },
+      where: { email: email },
       data: {
         password: bcrypt.hashSync(password, 8),
       },
