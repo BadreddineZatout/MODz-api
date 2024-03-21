@@ -11,7 +11,7 @@ import {
   UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
 import { MailerService } from '@nestjs-modules/mailer';
-import moment from 'moment';
+import * as moment from 'moment';
 
 @Injectable()
 export class UsersService {
@@ -187,14 +187,14 @@ export class UsersService {
     };
   }
 
-  async verifyEmail(id: number) {
+  async verifyEmail(id: number, email: string) {
     await this.prisma.user.update({
       where: { id: id },
       data: {
-        verfied_at: moment().toNow(),
+        verfied_at: moment().toDate(),
       },
     });
-    return { message: 'Password reset' };
+    return { message: `Email ${email} confirmed successfully` };
   }
 
   async resetPassword(id: number, password: string) {

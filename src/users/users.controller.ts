@@ -108,7 +108,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() data: { email: string },
   ) {
-    return this.usersService.verifyEmail(id);
+    return this.usersService.verifyEmail(id, data.email);
   }
 
   @Post('/:id/forgot-password')
