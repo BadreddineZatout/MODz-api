@@ -22,6 +22,7 @@ import {
 import { AuthGuard } from './guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { getStorageConfig } from 'src/utils/storage';
+import { ConfirmEmailGuard } from './guards/confirm-email.guard';
 
 @Controller()
 export class UsersController {
@@ -91,6 +92,32 @@ export class UsersController {
   ) {
     this.usersService.saveMedia(id, file, 'ID');
     return `File ${file.originalname} Uploaded Successfully`;
+  }
+
+  @Post('/:id/confirm-email')
+  sendConfirmEmail(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: { email: string },
+  ) {
+    return this.usersService.sendConfirmEmail(id, data.email);
+  }
+
+  @Post('/:id/verify-email')
+  @UseGuards(ConfirmEmailGuard)
+  verifyEmail(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: { email: string },
+  ) {
+    return this.usersService.verifyEmail(id, data.email);
+  }
+
+  @Post('/:id/forgot-password')
+  @UseGuards(AuthGuard)
+  forgotPassword(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: { password: string },
+  ) {
+    return this.usersService.resetPassword(id, data.password);
   }
 
   @Post('/:id/reset-password')

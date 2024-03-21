@@ -10,10 +10,16 @@ import {
   UpdateClientProfileDto,
   UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
+import { MailerService } from '@nestjs-modules/mailer';
+import * as moment from 'moment';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+    private readonly mailerService: MailerService,
+  ) {}
 
   async register(data: Prisma.UserCreateInput) {
     const user = await this.prisma.user.create({
@@ -161,6 +167,36 @@ export class UsersService {
     });
   }
 
+  async sendConfirmEmail(id: number, email: string) {
+    const code = this.generateRandomNumber();
+    const token = await this.jwtService.signAsync({
+      sub: id,
+      email: email,
+    });
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Confirm Your Email',
+      template: 'confirmation', // Name of your email template file without extension
+      context: {
+        code,
+      },
+    });
+    return {
+      code,
+      token,
+    };
+  }
+
+  async verifyEmail(id: number, email: string) {
+    await this.prisma.user.update({
+      where: { id: id },
+      data: {
+        verfied_at: moment().toDate(),
+      },
+    });
+    return { message: `Email ${email} confirmed successfully` };
+  }
+
   async resetPassword(id: number, password: string) {
     await this.prisma.user.update({
       where: { id: id },
@@ -169,5 +205,11 @@ export class UsersService {
       },
     });
     return { message: 'Password reset' };
+  }
+
+  private generateRandomNumber() {
+    const min = 100000; // Minimum 6-digit number
+    const max = 999999; // Maximum 6-digit number
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }
