@@ -5,6 +5,10 @@ import { PrismaService } from 'src/prisma.service';
 export class CategoriesService {
   constructor(private prisma: PrismaService) {}
 
+  async getCategories() {
+    return await this.prisma.category.findMany();
+  }
+
   async saveMedia(id: number, files: Array<Express.Multer.File>) {
     const promises = files.map(async (file) => {
       const media = await this.prisma.media.create({

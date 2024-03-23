@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Param,
   ParseIntPipe,
   Post,
@@ -13,6 +14,11 @@ import { getStorageConfig } from 'src/utils/storage';
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
+
+  @Get('/')
+  getCategories() {
+    return this.categoriesService.getCategories();
+  }
 
   @Post('/save-media/:id')
   @UseInterceptors(
