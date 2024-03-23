@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Post,
   Body,
   Param,
@@ -37,6 +38,12 @@ export class UsersController {
   @Post('/login')
   login(@Body() data: LoginDTO) {
     return this.usersService.login(data);
+  }
+
+  @Get('users/:id')
+  @UseGuards(AuthGuard)
+  getUser(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.getUser(id);
   }
 
   @Post('/create-profile')

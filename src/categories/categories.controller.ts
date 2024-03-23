@@ -14,7 +14,7 @@ import { getStorageConfig } from 'src/utils/storage';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Post('/:id/save-media')
+  @Post('/save-media/:id')
   @UseInterceptors(
     FilesInterceptor('files', 10, {
       storage: getStorageConfig('public/categories'),

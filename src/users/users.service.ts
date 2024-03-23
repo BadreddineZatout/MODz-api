@@ -97,6 +97,45 @@ export class UsersService {
     };
   }
 
+  async getUser(id: number) {
+    const user = await this.prisma.user.findFirst({
+      where: { id: id },
+      include: {
+        profile: true,
+      },
+    });
+    if (!user) {
+      throw new HttpException(
+        {
+          message: ['This User does not exist'],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const profile = user.profile
+      ? user.current_role == 'CLIENT'
+        ? await this.prisma.client.findFirst({
+            where: { id: user.profile.client_id },
+          })
+        : await this.prisma.employee.findFirst({
+            where: { id: user.profile.employee_id },
+            include: {
+              media: true,
+              state: true,
+              province: true,
+            },
+          })
+      : null;
+
+    return {
+      id: user.id,
+      email: user.email,
+      current_role: user.current_role,
+      profile: profile,
+    };
+  }
+
   async createClientProfile(
     user_id: number,
     client_data: CreateClientProfileDto,
