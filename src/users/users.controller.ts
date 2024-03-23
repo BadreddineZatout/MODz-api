@@ -57,7 +57,7 @@ export class UsersController {
     );
   }
 
-  @Put('/:id/update-profile')
+  @Put('/update-profile/:id')
   @UseGuards(AuthGuard)
   updateProfile(
     @Param('id', ParseIntPipe) id: number,
@@ -67,7 +67,7 @@ export class UsersController {
     return this.usersService.updateProfile(id, data);
   }
 
-  @Post('/:id/upload-selfie')
+  @Post('/upload-selfie/:id')
   @UseGuards(AuthGuard)
   @UseInterceptors(
     FileInterceptor('file', {
@@ -82,7 +82,7 @@ export class UsersController {
     return { message: `File ${file.originalname} Uploaded Successfully` };
   }
 
-  @Post('/:id/upload-id')
+  @Post('/upload-id/:id')
   @UseGuards(AuthGuard)
   @UseInterceptors(
     FileInterceptor('file', { storage: getStorageConfig('public/ids') }),
@@ -95,7 +95,7 @@ export class UsersController {
     return { message: `File ${file.originalname} Uploaded Successfully` };
   }
 
-  @Post('/:id/confirm-email')
+  @Post('/confirm-email/:id')
   sendConfirmEmail(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: { email: string },
@@ -103,7 +103,7 @@ export class UsersController {
     return this.usersService.sendConfirmEmail(id, data.email);
   }
 
-  @Post('/:id/verify-email')
+  @Post('/verify-email/:id')
   @UseGuards(ConfirmEmailGuard)
   verifyEmail(
     @Param('id', ParseIntPipe) id: number,
