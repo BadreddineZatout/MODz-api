@@ -45,6 +45,9 @@ export class UsersService {
   async login(data: LoginDTO) {
     const user = await this.prisma.user.findFirst({
       where: { email: data.email },
+      include: {
+        profile: true,
+      },
     });
     if (!user) {
       throw new HttpException(
@@ -64,11 +67,28 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    const profile = user.profile
+      ? user.current_role == 'CLIENT'
+        ? await this.prisma.client.findFirst({
+            where: { id: user.profile.client_id },
+          })
+        : await this.prisma.employee.findFirst({
+            where: { id: user.profile.employee_id },
+            include: {
+              media: true,
+              state: true,
+              province: true,
+            },
+          })
+      : null;
+
     return {
       user: {
         id: user.id,
         email: user.email,
         current_role: user.current_role,
+        profile: profile,
       },
       token: await this.jwtService.signAsync({
         sub: user.id,
