@@ -62,6 +62,7 @@ model Employee {
   state_id    Int
   province_id Int
   category_id Int
+  national_id String?
   is_active   Boolean
   status      Status       @default(PENDING)
   profile     ProfileUser?
