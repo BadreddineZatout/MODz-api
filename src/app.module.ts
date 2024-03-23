@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { CategoriesModule } from './categories/categories.module';
+import { StatesModule } from './states/states.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { CategoriesModule } from './categories/categories.module';
       serveRoot: '/public', // The URL path from which to serve the files
     }),
     CategoriesModule,
+    StatesModule,
   ],
   controllers: [],
   providers: [],
