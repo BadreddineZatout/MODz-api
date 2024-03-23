@@ -79,7 +79,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     this.usersService.saveMedia(id, file, 'SELFIE');
-    return `File ${file.originalname} Uploaded Successfully`;
+    return { message: `File ${file.originalname} Uploaded Successfully` };
   }
 
   @Post('/:id/upload-id')
@@ -92,7 +92,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     this.usersService.saveMedia(id, file, 'ID');
-    return `File ${file.originalname} Uploaded Successfully`;
+    return { message: `File ${file.originalname} Uploaded Successfully` };
   }
 
   @Post('/:id/confirm-email')
