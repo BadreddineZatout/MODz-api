@@ -79,6 +79,7 @@ export class UsersService {
               media: true,
               state: true,
               province: true,
+              category: true,
             },
           })
       : null;
@@ -124,6 +125,7 @@ export class UsersService {
               media: true,
               state: true,
               province: true,
+              category: true,
             },
           })
       : null;
