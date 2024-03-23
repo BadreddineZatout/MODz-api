@@ -46,8 +46,8 @@ model User {
 
 model Client {
   id         Int          @id @default(autoincrement())
-  first_name String       @unique
-  last_name  String       @unique
+  first_name String
+  last_name  String
   phone      String
   profile    ProfileUser?
 
@@ -56,8 +56,8 @@ model Client {
 
 model Employee {
   id          Int          @id @default(autoincrement())
-  first_name  String       @unique
-  last_name   String       @unique
+  first_name  String
+  last_name   String
   phone       String
   state_id    Int
   province_id Int

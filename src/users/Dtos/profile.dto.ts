@@ -25,6 +25,8 @@ export class CreateEmployeeProfileDto {
   @IsNotEmpty()
   phone: string;
   @IsNotEmpty()
+  national_id: string;
+  @IsNotEmpty()
   state_id: number;
   @IsNotEmpty()
   province_id: number;
@@ -42,6 +44,7 @@ export class UpdateEmployeeProfileDto {
   first_name: string;
   last_name: string;
   phone: string;
+  national_id: string;
   state_id: number;
   province_id: number;
   category_id: number;
