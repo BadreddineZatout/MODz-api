@@ -200,30 +200,35 @@ export class UsersService {
     });
   }
 
-  async saveMedia(id: number, file: Express.Multer.File, type: MediaType) {
-    const media = await this.prisma.media.create({
-      data: {
-        name: file.filename,
-        path: file.destination + '/' + file.filename,
-        type: type,
-      },
-    });
+  async saveMedia(
+    id: number,
+    files: Array<Express.Multer.File>,
+    type: MediaType,
+  ) {
     const profile = await this.prisma.profileUser.findFirst({
       where: { user_id: id },
       include: {
         employee: true,
       },
     });
-    await this.prisma.employee.update({
+    const { media } = await this.prisma.employee.update({
       where: { id: profile.employee_id },
       data: {
         media: {
-          connect: {
-            id: media.id,
-          },
+          create: files.map((file) => {
+            return {
+              name: file.filename,
+              path: file.destination + '/' + file.filename,
+              type: type,
+            };
+          }),
         },
       },
+      include: {
+        media: true,
+      },
     });
+    return media;
   }
 
   async sendConfirmEmail(id: number, email: string) {

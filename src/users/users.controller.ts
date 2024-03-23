@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  UploadedFiles,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma } from '@prisma/client';
@@ -21,7 +22,7 @@ import {
   UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
 import { AuthGuard } from './guards/auth.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { getStorageConfig } from 'src/utils/storage';
 import { ConfirmEmailGuard } from './guards/confirm-email.guard';
 import { ResetPasswordGuard } from './guards/reset-password.guard';
@@ -85,21 +86,19 @@ export class UsersController {
     @UploadedFile() file: Express.Multer.File,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    this.usersService.saveMedia(id, file, 'SELFIE');
-    return { message: `File ${file.originalname} Uploaded Successfully` };
+    return this.usersService.saveMedia(id, [file], 'SELFIE');
   }
 
   @Post('/upload-id/:id')
   @UseGuards(AuthGuard)
   @UseInterceptors(
-    FileInterceptor('file', { storage: getStorageConfig('public/ids') }),
+    FilesInterceptor('files', 2, { storage: getStorageConfig('public/ids') }),
   )
   uploadId(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    this.usersService.saveMedia(id, file, 'ID');
-    return { message: `File ${file.originalname} Uploaded Successfully` };
+    return this.usersService.saveMedia(id, files, 'ID');
   }
 
   @Post('/confirm-email/:id')
