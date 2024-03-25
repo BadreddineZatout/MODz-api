@@ -39,6 +39,7 @@ export class UsersService {
         sub: user.id,
         email: user.email,
       }),
+      email_confirmation: await this.sendConfirmEmail(user.id, user.email),
     };
   }
 
