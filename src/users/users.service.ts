@@ -208,6 +208,16 @@ export class UsersService {
     };
   }
 
+  async updatePassword(id: number, password: string) {
+    await this.prisma.user.update({
+      where: { id },
+      data: {
+        password: bcrypt.hashSync(password, 8),
+      },
+    });
+    return { message: 'Password updated' };
+  }
+
   async updateProfile(
     user_id: number,
     data: UpdateClientProfileDto | UpdateEmployeeProfileDto,

@@ -11,6 +11,8 @@ import {
   UploadedFile,
   UploadedFiles,
   Patch,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma } from '@prisma/client';
@@ -76,6 +78,24 @@ export class UsersController {
     return this.usersService.updateEmail(id, data.email);
   }
 
+  @Patch('/users/update-password/:id')
+  @UseGuards(AuthGuard)
+  updatePassword(
+    @Param('id', ParseIntPipe) id: number,
+    @Body()
+    data: { password: string; password_confirmation: string },
+  ) {
+    if (data.password !== data.password_confirmation) {
+      throw new HttpException(
+        {
+          message: ['Password Mismatch'],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.usersService.updatePassword(id, data.password);
+  }
+
   @Put('/users/update-profile/:id')
   @UseGuards(AuthGuard)
   updateProfile(
@@ -136,7 +156,22 @@ export class UsersController {
 
   @Post('/users/reset-password')
   @UseGuards(ResetPasswordGuard)
-  resetPassword(@Body() data: { email: string; password: string }) {
+  resetPassword(
+    @Body()
+    data: {
+      email: string;
+      password: string;
+      password_confirmation: string;
+    },
+  ) {
+    if (data.password !== data.password_confirmation) {
+      throw new HttpException(
+        {
+          message: ['Password Mismatch'],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return this.usersService.resetPassword(data.email, data.password);
   }
 }
