@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { MediaType, Prisma } from '@prisma/client';
+import { MediaType, Prisma, Role } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDTO } from './Dtos/login.dto';
@@ -219,6 +219,15 @@ export class UsersService {
       },
     });
     return { message: 'Password updated' };
+  }
+
+  async updateRole(id: number, current_role: Role) {
+    await this.prisma.user.update({
+      where: { id },
+      data: {
+        current_role,
+      },
+    });
   }
 
   async updateProfile(

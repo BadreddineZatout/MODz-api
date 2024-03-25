@@ -11,7 +11,7 @@ model User {
   id             Int          @id @default(autoincrement())
   email          String       @unique
   password       String
-  current_role   Role
+  current_role   Role?
   name           String?
   remember_token String?
   verified_at    DateTime?

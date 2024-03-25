@@ -57,11 +57,13 @@ export class UsersController {
     data: CreateProfileDto,
   ) {
     if (data.current_role === 'CLIENT') {
+      this.usersService.updateRole(data.user_id, 'CLIENT');
       return this.usersService.createClientProfile(
         data.user_id,
         data.data as CreateClientProfileDto,
       );
     }
+    this.usersService.updateRole(data.user_id, 'EMPLOYEE');
     return this.usersService.createEmployeeProfile(
       data.user_id,
       data.data as CreateEmployeeProfileDto,
