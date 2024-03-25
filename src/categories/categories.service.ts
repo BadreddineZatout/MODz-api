@@ -6,6 +6,28 @@ export class CategoriesService {
   constructor(private prisma: PrismaService) {}
 
   async getCategories() {
-    return await this.prisma.category.findMany();
+    const categories = await this.prisma.category.findMany();
+
+    return Promise.all(
+      categories.map(async (category) => {
+        const media = await this.prisma.media.findMany({
+          where: {
+            model_type: 'App\\Models\\Category',
+            model_id: category.id,
+          },
+        });
+        return {
+          ...category,
+          media: media.map((media) => {
+            return {
+              id: Number(media.id),
+              name: media.file_name,
+              path: `${process.env.ADMIN_URL}/storage/${media.id}/${media.file_name}`,
+              type: 'CATEGORY',
+            };
+          }),
+        };
+      }),
+    );
   }
 }

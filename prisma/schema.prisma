@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,33 +7,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ADMIN
-  CLIENT
-  EMPLOYEE
-}
-
-enum MediaType {
-  CATEGORY
-  SELFIE
-  ID
-}
-
-enum Status {
-  PENDING
-  VALID
-  REFUSED
-}
-
 model User {
   id             Int          @id @default(autoincrement())
-  name           String?
-  remember_token String?
   email          String       @unique
   password       String
+  current_role   Role
+  name           String?
+  remember_token String?
   verified_at    DateTime?
   profile        ProfileUser?
-  current_role   Role
 
   @@map("users")
 }
@@ -62,25 +38,28 @@ model Employee {
   state_id    Int
   province_id Int
   category_id Int
-  national_id String?
   is_active   Boolean
   status      Status       @default(PENDING)
+  national_id String?
+  category    Category     @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  province    Province     @relation(fields: [province_id], references: [id], onDelete: Cascade)
+  state       State        @relation(fields: [state_id], references: [id], onDelete: Cascade)
   profile     ProfileUser?
-  state       State        @relation(fields: [state_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  province    Province     @relation(fields: [province_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  category    Category     @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  media       Media[]
+  media       Image[]      @relation("employeetoimage")
 
+  @@index([category_id], map: "employees_category_id_fkey")
+  @@index([province_id], map: "employees_province_id_fkey")
+  @@index([state_id], map: "employees_state_id_fkey")
   @@map("employees")
 }
 
 model ProfileUser {
   user_id     Int       @unique
-  user        User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   client_id   Int?      @unique
-  client      Client?   @relation(fields: [client_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   employee_id Int?      @unique
-  employee    Employee? @relation(fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  client      Client?   @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  employee    Employee? @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("profile_user")
 }
@@ -91,20 +70,20 @@ model Category {
   profession  String
   description String
   employees   Employee[]
-  media       Media[]
+  media       Image[]    @relation("categorytoimage")
 
   @@map("categories")
 }
 
-model Media {
+model Image {
   id         Int        @id @default(autoincrement())
   name       String
   path       String
   type       MediaType
-  employees  Employee[]
-  categories Category[]
+  categories Category[] @relation("categorytoimage")
+  employees  Employee[] @relation("employeetoimage")
 
-  @@map("media")
+  @@map("images")
 }
 
 model State {
@@ -112,8 +91,8 @@ model State {
   code      Int
   name      String
   name_ar   String
-  provinces Province[]
   employees Employee[]
+  provinces Province[]
 
   @@map("states")
 }
@@ -125,8 +104,58 @@ model Province {
   city_name    String
   city_name_ar String
   state_id     Int
-  state        State      @relation(fields: [state_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   employees    Employee[]
+  state        State      @relation(fields: [state_id], references: [id], onDelete: Cascade)
 
+  @@index([state_id], map: "provinces_state_id_fkey")
   @@map("provinces")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model media {
+  id                    BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  model_type            String    @db.VarChar(255)
+  model_id              BigInt    @db.UnsignedBigInt
+  uuid                  String?   @unique(map: "media_uuid_unique") @db.Char(36)
+  collection_name       String    @db.VarChar(255)
+  name                  String    @db.VarChar(255)
+  file_name             String    @db.VarChar(255)
+  mime_type             String?   @db.VarChar(255)
+  disk                  String    @db.VarChar(255)
+  conversions_disk      String?   @db.VarChar(255)
+  size                  BigInt    @db.UnsignedBigInt
+  manipulations         Json
+  custom_properties     Json
+  generated_conversions Json
+  responsive_images     Json
+  order_column          Int?      @db.UnsignedInt
+  created_at            DateTime? @db.Timestamp(0)
+  updated_at            DateTime? @db.Timestamp(0)
+
+  @@index([model_type, model_id], map: "media_model_type_model_id_index")
+  @@index([order_column], map: "media_order_column_index")
+}
+
+model migrations {
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  migration String @db.VarChar(255)
+  batch     Int
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+  EMPLOYEE
+}
+
+enum MediaType {
+  CATEGORY
+  SELFIE
+  ID
+}
+
+enum Status {
+  PENDING
+  VALID
+  REFUSED
 }
