@@ -37,7 +37,7 @@ model User {
   remember_token String?
   email          String       @unique
   password       String
-  verfied_at     DateTime?
+  verified_at    DateTime?
   profile        ProfileUser?
   current_role   Role
 

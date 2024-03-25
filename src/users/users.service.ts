@@ -34,6 +34,7 @@ export class UsersService {
         id: user.id,
         email: user.email,
         current_role: user.current_role,
+        verified_at: user.verified_at,
       },
       token: await this.jwtService.signAsync({
         sub: user.id,
@@ -90,6 +91,7 @@ export class UsersService {
         id: user.id,
         email: user.email,
         current_role: user.current_role,
+        verified_at: user.verified_at,
         profile: profile,
       },
       token: await this.jwtService.signAsync({
@@ -102,7 +104,11 @@ export class UsersService {
   async getUser(id: number) {
     const user = await this.prisma.user.findFirst({
       where: { id: id },
-      include: {
+      select: {
+        id: true,
+        email: true,
+        verified_at: true,
+        current_role: true,
         profile: true,
       },
     });
@@ -132,9 +138,7 @@ export class UsersService {
       : null;
 
     return {
-      id: user.id,
-      email: user.email,
-      current_role: user.current_role,
+      ...user,
       profile: profile,
     };
   }
@@ -165,6 +169,43 @@ export class UsersService {
       data: { user_id: user_id, employee_id: client.id },
     });
     return client;
+  }
+
+  async updateEmail(id: number, email: string) {
+    const user = await this.prisma.user.update({
+      where: { id: id },
+      data: { email, verified_at: null },
+      select: {
+        id: true,
+        email: true,
+        verified_at: true,
+        current_role: true,
+        profile: true,
+      },
+    });
+    const profile = user.profile
+      ? user.current_role == 'CLIENT'
+        ? await this.prisma.client.findFirst({
+            where: { id: user.profile.client_id },
+          })
+        : await this.prisma.employee.findFirst({
+            where: { id: user.profile.employee_id },
+            include: {
+              media: true,
+              state: true,
+              province: true,
+              category: true,
+            },
+          })
+      : null;
+
+    return {
+      user: {
+        ...user,
+        profile: profile,
+      },
+      email_confirmation: await this.sendConfirmEmail(user.id, user.email),
+    };
   }
 
   async updateProfile(
@@ -258,7 +299,7 @@ export class UsersService {
     await this.prisma.user.update({
       where: { id: id },
       data: {
-        verfied_at: moment().toDate(),
+        verified_at: moment().toDate(),
       },
     });
     return { message: `Email ${email} confirmed successfully` };

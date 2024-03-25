@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
+  Patch,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma } from '@prisma/client';
@@ -47,7 +48,7 @@ export class UsersController {
     return this.usersService.getUser(id);
   }
 
-  @Post('/create-profile')
+  @Post('/users/create-profile')
   @UseGuards(AuthGuard)
   createProfile(
     @Body()
@@ -65,7 +66,17 @@ export class UsersController {
     );
   }
 
-  @Put('/update-profile/:id')
+  @Patch('/users/update-email/:id')
+  @UseGuards(AuthGuard)
+  updateEmail(
+    @Param('id', ParseIntPipe) id: number,
+    @Body()
+    data: { email: string },
+  ) {
+    return this.usersService.updateEmail(id, data.email);
+  }
+
+  @Put('/users/update-profile/:id')
   @UseGuards(AuthGuard)
   updateProfile(
     @Param('id', ParseIntPipe) id: number,
@@ -75,7 +86,7 @@ export class UsersController {
     return this.usersService.updateProfile(id, data);
   }
 
-  @Post('/upload-selfie/:id')
+  @Post('/users/upload-selfie/:id')
   @UseGuards(AuthGuard)
   @UseInterceptors(
     FileInterceptor('file', {
@@ -89,7 +100,7 @@ export class UsersController {
     return this.usersService.saveMedia(id, [file], 'SELFIE');
   }
 
-  @Post('/upload-id/:id')
+  @Post('/users/upload-id/:id')
   @UseGuards(AuthGuard)
   @UseInterceptors(
     FilesInterceptor('files', 2, { storage: getStorageConfig('public/ids') }),
@@ -101,7 +112,7 @@ export class UsersController {
     return this.usersService.saveMedia(id, files, 'ID');
   }
 
-  @Post('/confirm-email/:id')
+  @Post('/users/confirm-email/:id')
   sendConfirmEmail(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: { email: string },
@@ -109,7 +120,7 @@ export class UsersController {
     return this.usersService.sendConfirmEmail(id, data.email);
   }
 
-  @Post('/verify-email/:id')
+  @Post('/users/verify-email/:id')
   @UseGuards(ConfirmEmailGuard)
   verifyEmail(
     @Param('id', ParseIntPipe) id: number,
@@ -118,12 +129,12 @@ export class UsersController {
     return this.usersService.verifyEmail(id, data.email);
   }
 
-  @Post('/forgot-password')
+  @Post('/users/forgot-password')
   forgotPassword(@Body() data: { email: string }) {
     return this.usersService.sendResetEmail(data.email);
   }
 
-  @Post('/reset-password')
+  @Post('/users/reset-password')
   @UseGuards(ResetPasswordGuard)
   resetPassword(@Body() data: { email: string; password: string }) {
     return this.usersService.resetPassword(data.email, data.password);
