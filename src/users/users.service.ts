@@ -98,6 +98,9 @@ export class UsersService {
         sub: user.id,
         email: user.email,
       }),
+      email_confirmation: user.verified_at
+        ? null
+        : await this.sendConfirmEmail(user.id, user.email),
     };
   }
 
@@ -290,6 +293,7 @@ export class UsersService {
     const token = await this.jwtService.signAsync({
       sub: id,
       email: email,
+      type: 'Email Confirmation',
     });
     await this.mailerService.sendMail({
       to: email,
