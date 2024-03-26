@@ -143,6 +143,9 @@ export class UsersService {
     return {
       ...user,
       profile: profile,
+      email_confirmation: user.verified_at
+        ? null
+        : await this.sendConfirmEmail(user.id, user.email),
     };
   }
 
