@@ -25,6 +25,7 @@ model Client {
   first_name String
   last_name  String
   phone      String
+  status     Status       @default(PENDING)
   profile    ProfileUser?
 
   @@map("clients")

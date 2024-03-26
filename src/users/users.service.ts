@@ -164,14 +164,14 @@ export class UsersService {
     user_id: number,
     employee_data: CreateEmployeeProfileDto,
   ) {
-    const client = await this.prisma.employee.create({
-      data: { ...employee_data, is_active: false, status: 'PENDING' },
+    const employee = await this.prisma.employee.create({
+      data: { ...employee_data, is_active: false },
     });
 
     await this.prisma.profileUser.create({
-      data: { user_id: user_id, employee_id: client.id },
+      data: { user_id: user_id, employee_id: employee.id },
     });
-    return client;
+    return employee;
   }
 
   async updateEmail(id: number, email: string) {

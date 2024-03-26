@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `clients` ADD COLUMN `status` ENUM('PENDING', 'VALID', 'REFUSED') NOT NULL DEFAULT 'PENDING';
