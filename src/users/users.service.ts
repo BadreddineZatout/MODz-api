@@ -287,7 +287,12 @@ export class UsersService {
           create: files.map((file) => {
             return {
               name: file.filename,
-              path: file.destination + '/' + file.filename,
+              path:
+                process.env.APP_URL +
+                '/' +
+                file.destination +
+                '/' +
+                file.filename,
               type: type,
             };
           }),
