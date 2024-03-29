@@ -3,6 +3,8 @@ import { UsersModule } from './users/users.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { CategoriesModule } from './categories/categories.module';
 import { StatesModule } from './states/states.module';
+import { PrismaService } from './prisma.service';
+import { IsEmailUniqueConstraint } from './users/validators/is-email-unique.validator';
 
 @Module({
   imports: [
@@ -15,6 +17,6 @@ import { StatesModule } from './states/states.module';
     StatesModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [PrismaService, IsEmailUniqueConstraint],
 })
 export class AppModule {}

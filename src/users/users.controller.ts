@@ -16,7 +16,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma } from '@prisma/client';
-import { LoginDTO } from './Dtos/login.dto';
+import { LoginDTO, RegisterDTO } from './Dtos/auth.dto';
 import {
   CreateClientProfileDto,
   CreateEmployeeProfileDto,
@@ -35,7 +35,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/register')
-  register(@Body() data: Prisma.UserCreateInput) {
+  register(@Body() data: RegisterDTO) {
     return this.usersService.register(data);
   }
 

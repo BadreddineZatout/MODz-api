@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { MediaType, Prisma, Role } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { LoginDTO } from './Dtos/login.dto';
+import { LoginDTO } from './Dtos/auth.dto';
 import {
   CreateClientProfileDto,
   CreateEmployeeProfileDto,
