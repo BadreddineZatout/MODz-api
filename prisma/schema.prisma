@@ -73,6 +73,7 @@ model Category {
   urgent      Boolean    @default(false)
   employees   Employee[]
   media       Image[]    @relation("categorytoimage")
+  Provider    Provider[]
 
   @@map("categories")
 }
@@ -95,6 +96,7 @@ model State {
   name_ar   String
   employees Employee[]
   provinces Province[]
+  Provider  Provider[]
 
   @@map("states")
 }
@@ -108,9 +110,45 @@ model Province {
   state_id     Int
   employees    Employee[]
   state        State      @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  Provider     Provider[]
 
   @@index([state_id], map: "provinces_state_id_fkey")
   @@map("provinces")
+}
+
+model SocialMedia {
+  id        Int                    @id @default(autoincrement())
+  name      String
+  providers provider_socialmedia[]
+
+  @@map("social_media")
+}
+
+model Provider {
+  id            Int                    @id @default(autoincrement())
+  province_id   Int
+  state_id      Int
+  category_id   Int
+  shop_name     String                 @unique
+  phone_number  String                 @unique
+  phone_number2 String?                @unique
+  province      Province               @relation(fields: [province_id], references: [id], onDelete: Cascade)
+  state         State                  @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  category      Category               @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  social_media  provider_socialmedia[]
+
+  @@map("providers")
+}
+
+model provider_socialmedia {
+  provider        Provider    @relation(fields: [provider_id], references: [id])
+  provider_id     Int
+  social_media    SocialMedia @relation(fields: [social_media_id], references: [id])
+  social_media_id Int
+  link            String
+
+  @@id([provider_id, social_media_id])
+  @@map("provider_socialmedia")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
