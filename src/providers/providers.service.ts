@@ -36,4 +36,31 @@ export class ProvidersService {
       };
     });
   }
+
+  async getProvider(id: number) {
+    const provider = await this.prisma.provider.findFirst({
+      where: { id },
+      include: {
+        province: true,
+        state: true,
+        category: true,
+        social_media: {
+          include: {
+            social_media: true,
+          },
+        },
+      },
+    });
+
+    return {
+      ...provider,
+      social_media: provider.social_media.map((social_media) => {
+        return {
+          id: social_media.social_media_id,
+          name: social_media.social_media.name,
+          link: social_media.link,
+        };
+      }),
+    };
+  }
 }
