@@ -70,6 +70,7 @@ model Category {
   name        String
   profession  String
   description String
+  urgent      Boolean    @default(false)
   employees   Employee[]
   media       Image[]    @relation("categorytoimage")
 
