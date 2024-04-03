@@ -5,8 +5,12 @@ import { PrismaService } from 'src/prisma.service';
 export class CategoriesService {
   constructor(private prisma: PrismaService) {}
 
-  async getCategories() {
-    const categories = await this.prisma.category.findMany();
+  async getCategories(urgent?: boolean) {
+    const categories = await this.prisma.category.findMany({
+      where: {
+        urgent,
+      },
+    });
 
     return Promise.all(
       categories.map(async (category) => {
