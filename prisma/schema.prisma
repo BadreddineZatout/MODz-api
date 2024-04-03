@@ -117,25 +117,25 @@ model Province {
 }
 
 model SocialMedia {
-  id                   Int                    @id @default(autoincrement())
-  name                 String
-  provider_socialmedia provider_socialmedia[]
+  id        Int                    @id @default(autoincrement())
+  name      String
+  providers provider_socialmedia[]
 
   @@map("social_media")
 }
 
 model Provider {
-  id                   Int                    @id @default(autoincrement())
-  province_id          Int
-  state_id             Int
-  category_id          Int
-  shop_name            String                 @unique
-  phone_number         String                 @unique
-  phone_number2        String?                @unique
-  province             Province               @relation(fields: [province_id], references: [id], onDelete: Cascade)
-  state                State                  @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  category             Category               @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  provider_socialmedia provider_socialmedia[]
+  id            Int                    @id @default(autoincrement())
+  province_id   Int
+  state_id      Int
+  category_id   Int
+  shop_name     String                 @unique
+  phone_number  String                 @unique
+  phone_number2 String?                @unique
+  province      Province               @relation(fields: [province_id], references: [id], onDelete: Cascade)
+  state         State                  @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  category      Category               @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  social_media  provider_socialmedia[]
 
   @@map("providers")
 }
