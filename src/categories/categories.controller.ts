@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { CategoryQueryDto } from './Dtos/query.dto';
+import { CategoryQueryDto } from './Dtos/category-query.dto';
 
 @Controller('categories')
 export class CategoriesController {
