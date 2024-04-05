@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { ProviderQueryDto } from './Dtos/Query.dto';
+import { ProviderQueryDto } from './Dtos/query.dto';
 
 @Injectable()
 export class ProvidersService {

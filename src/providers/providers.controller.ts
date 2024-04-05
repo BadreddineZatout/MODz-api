@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ProvidersService } from './providers.service';
-import { ProviderQueryDto } from './Dtos/Query.dto';
+import { ProviderQueryDto } from './Dtos/query.dto';
 
 @Controller('providers')
 export class ProvidersController {
