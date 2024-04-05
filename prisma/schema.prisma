@@ -74,6 +74,8 @@ model Category {
   employees   Employee[]
   media       Image[]    @relation("categorytoimage")
   Provider    Provider[]
+  job_types   jobType[]  @relation("category_jobtype")
+  items       item[]
 
   @@map("categories")
 }
@@ -149,6 +151,27 @@ model provider_socialmedia {
 
   @@id([provider_id, social_media_id])
   @@map("provider_socialmedia")
+}
+
+model jobType {
+  id         Int        @id @default(autoincrement())
+  name       String     @unique
+  has_items  Boolean    @default(false)
+  categories Category[] @relation("category_jobtype")
+  items      item[]
+
+  @@map("job_types")
+}
+
+model item {
+  id          Int      @id @default(autoincrement())
+  name        String
+  category_id Int
+  job_type_id Int
+  category    Category @relation(fields: [category_id], references: [id])
+  job_type    jobType  @relation(fields: [job_type_id], references: [id])
+
+  @@map("items")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
