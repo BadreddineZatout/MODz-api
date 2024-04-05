@@ -11,7 +11,11 @@ export class CategoriesService {
         urgent,
       },
       include: {
-        job_types: true,
+        job_types: {
+          include: {
+            items: true,
+          },
+        },
       },
     });
 
@@ -25,6 +29,14 @@ export class CategoriesService {
         });
         return {
           ...category,
+          job_types: category.job_types.map((job_type) => {
+            return {
+              ...job_type,
+              items: job_type.items.filter(
+                (item) => item.category_id === category.id,
+              ),
+            };
+          }),
           media: media.map((media) => {
             return {
               id: Number(media.id),
