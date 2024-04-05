@@ -156,7 +156,7 @@ model provider_socialmedia {
 model jobType {
   id         Int        @id @default(autoincrement())
   name       String     @unique
-  has_items  Boolean
+  has_items  Boolean    @default(false)
   categories Category[] @relation("category_jobtype")
   items      item[]
 

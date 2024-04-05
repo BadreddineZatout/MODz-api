@@ -10,6 +10,9 @@ export class CategoriesService {
       where: {
         urgent,
       },
+      include: {
+        job_types: true,
+      },
     });
 
     return Promise.all(
