@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { CategoryQueryDto } from './Dtos/category-query.dto';
 
 @Injectable()
 export class CategoriesService {
   constructor(private prisma: PrismaService) {}
 
-  async getCategories(urgent?: boolean) {
+  async getCategories(query: CategoryQueryDto) {
+    const take = query.per_page ?? 10;
+
     const categories = await this.prisma.category.findMany({
+      skip: query.page ? (query.page - 1) * take : 0,
+      take,
       where: {
-        urgent,
+        urgent: query.urgent,
       },
       include: {
         job_types: {

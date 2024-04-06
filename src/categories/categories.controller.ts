@@ -7,7 +7,7 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get('/')
-  getCategories(@Query() { urgent }: CategoryQueryDto) {
-    return this.categoriesService.getCategories(urgent);
+  getCategories(@Query() query: CategoryQueryDto) {
+    return this.categoriesService.getCategories(query);
   }
 }
