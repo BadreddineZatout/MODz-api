@@ -8,11 +8,13 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderGuard } from './guards/order.guard';
+import { OrderQuery } from './dto/order-query.dto';
 
 @Controller('orders')
 @UseGuards(OrderGuard)
@@ -25,8 +27,8 @@ export class OrdersController {
   }
 
   @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  findAll(@Query() query: OrderQuery) {
+    return this.ordersService.findAll(query);
   }
 
   @Get(':id')

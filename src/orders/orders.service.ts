@@ -1,3 +1,4 @@
+import { OrderQuery } from './dto/order-query.dto';
 import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -11,8 +12,41 @@ export class OrdersService {
     return 'This action adds a new order';
   }
 
-  findAll() {
-    return `This action returns all orders`;
+  async findAll(query: OrderQuery) {
+    const take = query.per_page ?? 10;
+    const orders = await this.prisma.order.findMany({
+      skip: query.page ? (query.page - 1) * take : 0,
+      take,
+      where: {
+        client_id: query.client_id,
+        category_id: query.category_id,
+        job_type_id: query.client_id,
+        status: query.status,
+        is_urgent: query.is_urgent,
+      },
+      include: {
+        category: true,
+        job_type: true,
+        client: true,
+        items: {
+          include: {
+            item: true,
+          },
+        },
+      },
+    });
+
+    return orders.map((order) => {
+      return {
+        ...order,
+        items: order.items.map((item) => {
+          return {
+            ...item.item,
+            quantity: item.quantity,
+          };
+        }),
+      };
+    });
   }
 
   async getOrder(id: number) {
