@@ -79,7 +79,10 @@ export class OrdersService {
     return `This action updates a #${id} order`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+  async remove(id: number) {
+    await this.prisma.order.delete({
+      where: { id: id },
+    });
+    return { message: 'Order deleted' };
   }
 }

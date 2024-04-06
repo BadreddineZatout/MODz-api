@@ -15,6 +15,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderGuard } from './guards/order.guard';
 import { OrderQuery } from './dto/order-query.dto';
+import { OrderExists } from './decorators/order-exists.decorator';
 
 @Controller('orders')
 @UseGuards(OrderGuard)
@@ -37,12 +38,12 @@ export class OrdersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
+  update(@OrderExists() id: number, @Body() updateOrderDto: UpdateOrderDto) {
+    return this.ordersService.update(id, updateOrderDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ordersService.remove(+id);
+  remove(@OrderExists() id: number) {
+    return this.ordersService.remove(id);
   }
 }

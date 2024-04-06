@@ -145,9 +145,9 @@ model Provider {
 }
 
 model ProviderSocialmedia {
-  provider        Provider    @relation(fields: [provider_id], references: [id])
+  provider        Provider    @relation(fields: [provider_id], references: [id], onDelete: Cascade)
   provider_id     Int
-  social_media    SocialMedia @relation(fields: [social_media_id], references: [id])
+  social_media    SocialMedia @relation(fields: [social_media_id], references: [id], onDelete: Cascade)
   social_media_id Int
   link            String
 
@@ -172,8 +172,8 @@ model Item {
   price       Float       @default(0.0)
   category_id Int
   job_type_id Int
-  category    Category    @relation(fields: [category_id], references: [id])
-  job_type    JobType     @relation(fields: [job_type_id], references: [id])
+  category    Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  job_type    JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
   orders      ItemOrder[]
 
   @@map("items")
@@ -190,18 +190,18 @@ model Order {
   status      OrderStatus @default(PENDING)
   is_urgent   Boolean     @default(false)
 
-  client   Client      @relation(fields: [client_id], references: [id])
-  category Category    @relation(fields: [category_id], references: [id])
-  job_type JobType     @relation(fields: [job_type_id], references: [id])
+  client   Client      @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  category Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  job_type JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
   items    ItemOrder[]
 
   @@map("orders")
 }
 
 model ItemOrder {
-  item     Item  @relation(fields: [item_id], references: [id])
+  item     Item  @relation(fields: [item_id], references: [id], onDelete: Cascade)
   item_id  Int
-  order    Order @relation(fields: [order_id], references: [id])
+  order    Order @relation(fields: [order_id], references: [id], onDelete: Cascade)
   order_id Int
   quantity Int   @default(1)
 
