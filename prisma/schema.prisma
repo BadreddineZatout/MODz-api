@@ -27,6 +27,7 @@ model Client {
   phone      String
   status     Status       @default(PENDING)
   profile    ProfileUser?
+  Order      Order[]
 
   @@map("clients")
 }
@@ -74,8 +75,9 @@ model Category {
   employees   Employee[]
   media       Image[]    @relation("categorytoimage")
   Provider    Provider[]
-  job_types   jobType[]  @relation("category_jobtype")
-  items       item[]
+  job_types   JobType[]  @relation("category_jobtype")
+  items       Item[]
+  Order       Order[]
 
   @@map("categories")
 }
@@ -119,30 +121,30 @@ model Province {
 }
 
 model SocialMedia {
-  id        Int                    @id @default(autoincrement())
+  id        Int                   @id @default(autoincrement())
   name      String
-  providers provider_socialmedia[]
+  providers ProviderSocialmedia[]
 
   @@map("social_media")
 }
 
 model Provider {
-  id            Int                    @id @default(autoincrement())
+  id            Int                   @id @default(autoincrement())
   province_id   Int
   state_id      Int
   category_id   Int
-  shop_name     String                 @unique
-  phone_number  String                 @unique
-  phone_number2 String?                @unique
-  province      Province               @relation(fields: [province_id], references: [id], onDelete: Cascade)
-  state         State                  @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  category      Category               @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  social_media  provider_socialmedia[]
+  shop_name     String                @unique
+  phone_number  String                @unique
+  phone_number2 String?               @unique
+  province      Province              @relation(fields: [province_id], references: [id], onDelete: Cascade)
+  state         State                 @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  category      Category              @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  social_media  ProviderSocialmedia[]
 
   @@map("providers")
 }
 
-model provider_socialmedia {
+model ProviderSocialmedia {
   provider        Provider    @relation(fields: [provider_id], references: [id])
   provider_id     Int
   social_media    SocialMedia @relation(fields: [social_media_id], references: [id])
@@ -153,25 +155,58 @@ model provider_socialmedia {
   @@map("provider_socialmedia")
 }
 
-model jobType {
+model JobType {
   id         Int        @id @default(autoincrement())
   name       String     @unique
   has_items  Boolean    @default(false)
   categories Category[] @relation("category_jobtype")
-  items      item[]
+  items      Item[]
+  Order      Order[]
 
   @@map("job_types")
 }
 
-model item {
-  id          Int      @id @default(autoincrement())
+model Item {
+  id          Int         @id @default(autoincrement())
   name        String
+  price       Float       @default(0.0)
   category_id Int
   job_type_id Int
-  category    Category @relation(fields: [category_id], references: [id])
-  job_type    jobType  @relation(fields: [job_type_id], references: [id])
+  category    Category    @relation(fields: [category_id], references: [id])
+  job_type    JobType     @relation(fields: [job_type_id], references: [id])
+  orders      ItemOrder[]
 
   @@map("items")
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  client_id   Int
+  description String?
+  date        DateTime
+  hour        String
+  category_id Int
+  job_type_id Int
+  status      OrderStatus @default(PENDING)
+  is_urgent   Boolean     @default(false)
+
+  client   Client      @relation(fields: [client_id], references: [id])
+  category Category    @relation(fields: [category_id], references: [id])
+  job_type JobType     @relation(fields: [job_type_id], references: [id])
+  items    ItemOrder[]
+
+  @@map("orders")
+}
+
+model ItemOrder {
+  item     Item  @relation(fields: [item_id], references: [id])
+  item_id  Int
+  order    Order @relation(fields: [order_id], references: [id])
+  order_id Int
+  quantity Int   @default(1)
+
+  @@id([item_id, order_id])
+  @@map("item_order")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -221,4 +256,11 @@ enum Status {
   PENDING
   VALID
   REFUSED
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  DONE
+  CANCELLED
 }

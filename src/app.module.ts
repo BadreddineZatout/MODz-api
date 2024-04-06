@@ -6,6 +6,7 @@ import { StatesModule } from './states/states.module';
 import { PrismaService } from './prisma.service';
 import { IsEmailUniqueConstraint } from './users/validators/is-email-unique.validator';
 import { ProvidersModule } from './providers/providers.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ProvidersModule } from './providers/providers.module';
     CategoriesModule,
     StatesModule,
     ProvidersModule,
+    OrdersModule,
   ],
   controllers: [],
   providers: [PrismaService, IsEmailUniqueConstraint],
