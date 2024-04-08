@@ -2,7 +2,6 @@ import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
-  IsEnum,
   IsOptional,
   IsString,
   Min,
@@ -10,7 +9,6 @@ import {
 import { ClientExists } from '../decorators/client-exists.decorator';
 import { CategoryExists } from '../decorators/category-exists.decorator';
 import { JobTypeExists } from '../decorators/job-type-exists.decorator';
-import { OrderStatus } from '@prisma/client';
 
 export class CreateOrderDto {
   @Transform(({ value }) => parseInt(value))

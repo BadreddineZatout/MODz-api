@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
   ParseIntPipe,
@@ -37,7 +37,7 @@ export class OrdersController {
     return this.ordersService.getOrder(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@OrderExists() id: number, @Body() updateOrderDto: UpdateOrderDto) {
     return this.ordersService.update(id, updateOrderDto);
   }

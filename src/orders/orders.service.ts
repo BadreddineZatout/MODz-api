@@ -8,10 +8,11 @@ import { PrismaService } from 'src/prisma.service';
 export class OrdersService {
   constructor(private prisma: PrismaService) {}
 
-  create(createOrderDto: CreateOrderDto) {
-    return this.prisma.order.create({
+  async create(createOrderDto: CreateOrderDto) {
+    return await this.prisma.order.create({
       data: {
         client_id: createOrderDto.client_id,
+        description: createOrderDto.description,
         date: new Date(createOrderDto.date),
         hour: createOrderDto.hour,
         category_id: createOrderDto.category_id,
@@ -96,8 +97,42 @@ export class OrdersService {
     };
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  async update(id: number, updateOrderDto: UpdateOrderDto) {
+    if (updateOrderDto.items) {
+      await this.prisma.itemOrder.deleteMany({
+        where: { order_id: id },
+      });
+      await this.prisma.order.update({
+        where: { id },
+        data: {
+          items: {
+            create: updateOrderDto.items,
+          },
+        },
+      });
+    }
+
+    return await this.prisma.order.update({
+      where: { id },
+      data: {
+        description: updateOrderDto.description,
+        date: updateOrderDto.date
+          ? new Date(updateOrderDto.date)
+          : updateOrderDto.date,
+        hour: updateOrderDto.hour,
+        is_urgent: updateOrderDto.is_urgent,
+        status: updateOrderDto.status,
+      },
+      include: {
+        category: true,
+        job_type: true,
+        items: {
+          include: {
+            item: true,
+          },
+        },
+      },
+    });
   }
 
   async remove(id: number) {
