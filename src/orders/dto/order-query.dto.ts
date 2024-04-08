@@ -1,9 +1,6 @@
 import { OrderStatus } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, Min, Validate } from 'class-validator';
-import { ClientExistsConstraint } from '../validators/client-exists.validator';
-import { CategoryExistsConstraint } from '../validators/category-exists.validator';
-import { JobTypeExistsConstraint } from '../validators/job-type-exists.validator';
+import { IsEnum, IsOptional, IsString, Min } from 'class-validator';
 import { ClientExists } from '../decorators/client-exists.decorator';
 import { CategoryExists } from '../decorators/category-exists.decorator';
 import { JobTypeExists } from '../decorators/job-type-exists.decorator';

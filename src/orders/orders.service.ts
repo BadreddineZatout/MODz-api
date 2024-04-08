@@ -42,7 +42,7 @@ export class OrdersService {
       where: {
         client_id: query.client_id,
         category_id: query.category_id,
-        job_type_id: query.client_id,
+        job_type_id: query.job_type_id,
         status: query.status,
         is_urgent: query.is_urgent,
       },
