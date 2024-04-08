@@ -1,8 +1,10 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
-import { MediaType, Prisma, Role } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
+import { MediaType, Prisma, Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import * as moment from 'moment';
+import { PrismaService } from 'src/prisma.service';
 import { LoginDTO } from './Dtos/auth.dto';
 import {
   CreateClientProfileDto,
@@ -10,8 +12,6 @@ import {
   UpdateClientProfileDto,
   UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
-import { MailerService } from '@nestjs-modules/mailer';
-import * as moment from 'moment';
 
 @Injectable()
 export class UsersService {

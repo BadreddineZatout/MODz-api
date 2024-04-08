@@ -1,8 +1,8 @@
 import { OrderStatus } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, Min } from 'class-validator';
-import { ClientExists } from '../decorators/client-exists.decorator';
 import { CategoryExists } from '../decorators/category-exists.decorator';
+import { ClientExists } from '../decorators/client-exists.decorator';
 import { JobTypeExists } from '../decorators/job-type-exists.decorator';
 
 export class OrderQuery {

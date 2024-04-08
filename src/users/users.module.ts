@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UsersController } from './users.controller';
-import { JwtModule } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { PrismaService } from 'src/prisma.service';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 import { IsEmailUniqueConstraint } from './validators/is-email-unique.validator';
 
 @Module({

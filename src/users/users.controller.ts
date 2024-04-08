@@ -1,20 +1,21 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  Param,
-  Put,
-  ParseIntPipe,
-  UseGuards,
-  UseInterceptors,
-  UploadedFile,
-  UploadedFiles,
-  Patch,
   HttpException,
   HttpStatus,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Put,
+  UploadedFile,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { getStorageConfig } from 'src/utils/storage';
 import { LoginDTO, RegisterDTO } from './Dtos/auth.dto';
 import {
   CreateClientProfileDto,
@@ -24,10 +25,9 @@ import {
   UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
 import { AuthGuard } from './guards/auth.guard';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { getStorageConfig } from 'src/utils/storage';
 import { ConfirmEmailGuard } from './guards/confirm-email.guard';
 import { ResetPasswordGuard } from './guards/reset-password.guard';
+import { UsersService } from './users.service';
 
 @Controller()
 export class UsersController {
