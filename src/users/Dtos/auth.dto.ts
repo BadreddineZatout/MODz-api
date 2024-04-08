@@ -3,9 +3,7 @@ import { IsEmailUniqueConstraint } from '../validators/is-email-unique.validator
 
 export class RegisterDTO {
   @IsNotEmpty()
-  @Validate(IsEmailUniqueConstraint, {
-    message: 'Email $value is already taken.',
-  })
+  @Validate(IsEmailUniqueConstraint)
   @IsString()
   email: string;
 
