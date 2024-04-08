@@ -1,8 +1,8 @@
-import { OrderQuery } from './dto/order-query.dto';
 import { Injectable } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from 'src/prisma.service';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { OrderQuery } from './dto/order-query.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -99,13 +99,11 @@ export class OrdersService {
 
   async update(id: number, updateOrderDto: UpdateOrderDto) {
     if (updateOrderDto.items) {
-      await this.prisma.itemOrder.deleteMany({
-        where: { order_id: id },
-      });
       await this.prisma.order.update({
         where: { id },
         data: {
           items: {
+            deleteMany: {},
             create: updateOrderDto.items,
           },
         },
