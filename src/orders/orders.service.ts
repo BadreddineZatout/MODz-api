@@ -9,7 +9,28 @@ export class OrdersService {
   constructor(private prisma: PrismaService) {}
 
   create(createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order';
+    return this.prisma.order.create({
+      data: {
+        client_id: createOrderDto.client_id,
+        date: new Date(createOrderDto.date),
+        hour: createOrderDto.hour,
+        category_id: createOrderDto.category_id,
+        job_type_id: createOrderDto.job_type_id,
+        is_urgent: createOrderDto.is_urgent,
+        items: {
+          create: createOrderDto.items,
+        },
+      },
+      include: {
+        category: true,
+        job_type: true,
+        items: {
+          include: {
+            item: true,
+          },
+        },
+      },
+    });
   }
 
   async findAll(query: OrderQuery) {
