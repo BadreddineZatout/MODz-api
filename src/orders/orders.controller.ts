@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
-  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -14,11 +12,11 @@ import { OrderExists } from './decorators/order-exists.decorator';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderQuery } from './dto/order-query.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { OrderGuard } from './guards/order.guard';
+import { TokenGuard } from './guards/token.guard';
 import { OrdersService } from './orders.service';
 
 @Controller('orders')
-@UseGuards(OrderGuard)
+@UseGuards(TokenGuard)
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
@@ -33,7 +31,7 @@ export class OrdersController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@OrderExists() id: number) {
     return this.ordersService.getOrder(id);
   }
 

@@ -48,6 +48,7 @@ model Employee {
   state       State        @relation(fields: [state_id], references: [id], onDelete: Cascade)
   profile     ProfileUser?
   media       Image[]      @relation("employeetoimage")
+  Offer       Offer[]
 
   @@index([category_id], map: "employees_category_id_fkey")
   @@index([province_id], map: "employees_province_id_fkey")
@@ -169,7 +170,8 @@ model JobType {
 model Item {
   id          Int         @id @default(autoincrement())
   name        String
-  price       Float       @default(0.0)
+  min_price   Float       @default(0.0)
+  max_price   Float       @default(0.0)
   category_id Int
   job_type_id Int
   category    Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
@@ -194,6 +196,7 @@ model Order {
   category Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
   job_type JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
   items    ItemOrder[]
+  Offer    Offer[]
 
   @@map("orders")
 }
@@ -207,6 +210,18 @@ model ItemOrder {
 
   @@id([item_id, order_id])
   @@map("item_order")
+}
+
+model Offer {
+  id          Int         @id @default(autoincrement())
+  employee_id Int
+  order_id    Int
+  can_travel  Boolean     @default(true)
+  price       Float       @default(0.0)
+  status      OfferStatus @default(PENDING)
+
+  employee Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  order    Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -263,4 +278,10 @@ enum OrderStatus {
   PROCESSING
   DONE
   CANCELLED
+}
+
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  REFUSED
 }

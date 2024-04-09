@@ -5,7 +5,7 @@ import {
 } from 'class-validator';
 import { PrismaService } from 'src/prisma.service';
 
-@ValidatorConstraint({ name: 'clientExists', async: true })
+@ValidatorConstraint({ name: 'jobTypeExists', async: true })
 @Injectable()
 export class JobTypeExistsConstraint implements ValidatorConstraintInterface {
   constructor(private readonly prisma: PrismaService) {}
@@ -16,6 +16,6 @@ export class JobTypeExistsConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage() {
-    return 'JobType with ID $value does not exist.';
+    return 'Job Type with ID $value does not exist.';
   }
 }
