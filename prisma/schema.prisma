@@ -222,6 +222,8 @@ model Offer {
 
   employee Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
   order    Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
+
+  @@map("offers")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
