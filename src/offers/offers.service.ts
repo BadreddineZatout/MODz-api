@@ -20,8 +20,45 @@ export class OffersService {
     return `This action returns all offers`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} offer`;
+  async findOne(id: number) {
+    const offer = await this.prisma.offer.findFirst({
+      where: { id },
+      include: {
+        order: {
+          include: {
+            category: true,
+            job_type: true,
+            client: true,
+            items: {
+              include: {
+                item: true,
+              },
+            },
+          },
+        },
+        employee: {
+          include: {
+            category: true,
+            state: true,
+            province: true,
+            media: true,
+          },
+        },
+      },
+    });
+
+    return {
+      ...offer,
+      order: {
+        ...offer.order,
+        items: offer.order.items.map((item) => {
+          return {
+            ...item.item,
+            quantity: item.quantity,
+          };
+        }),
+      },
+    };
   }
 
   async update(id: number, updateOfferDto: UpdateOfferDto) {
