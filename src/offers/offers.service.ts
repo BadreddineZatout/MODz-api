@@ -25,7 +25,13 @@ export class OffersService {
   }
 
   update(id: number, updateOfferDto: UpdateOfferDto) {
-    return `This action updates a #${id} offer`;
+    return this.prisma.offer.update({
+      where: { id },
+      data: updateOfferDto,
+      include: {
+        order: true,
+      },
+    });
   }
 
   remove(id: number) {

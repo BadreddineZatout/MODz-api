@@ -1,6 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { OrderStatus } from '@prisma/client';
-import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
@@ -8,9 +6,8 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { CreateOrderDto } from './create-order.dto';
 
-export class UpdateOrderDto extends PartialType(CreateOrderDto) {
+export class UpdateOrderDto {
   @IsOptional()
   @IsString()
   description: string;
@@ -24,7 +21,6 @@ export class UpdateOrderDto extends PartialType(CreateOrderDto) {
   hour: string;
 
   @IsOptional()
-  @Transform(({ value }) => value == 'true')
   is_urgent: boolean;
 
   @IsOptional()

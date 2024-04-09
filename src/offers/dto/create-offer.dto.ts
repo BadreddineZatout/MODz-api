@@ -15,7 +15,6 @@ export class CreateOfferDto {
   order_id: number;
 
   @IsOptional()
-  @Transform(({ value }) => value == 'true')
   can_travel: boolean;
 
   @Min(1)

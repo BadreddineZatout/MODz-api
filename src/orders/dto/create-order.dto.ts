@@ -37,7 +37,6 @@ export class CreateOrderDto {
   job_type_id: number;
 
   @IsOptional()
-  @Transform(({ value }) => value == 'true')
   is_urgent: boolean;
 
   @IsOptional()

@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
-  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -33,7 +31,7 @@ export class OrdersController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@OrderExists() id: number) {
     return this.ordersService.getOrder(id);
   }
 

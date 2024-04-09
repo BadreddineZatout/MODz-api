@@ -3,12 +3,12 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
-  Patch,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { TokenGuard } from 'src/orders/guards/token.guard';
+import { OfferExists } from './decorators/offer-exists.decorator';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
 import { OffersService } from './offers.service';
@@ -29,17 +29,17 @@ export class OffersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.offersService.findOne(+id);
+  findOne(@OfferExists() id: number) {
+    return this.offersService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOfferDto: UpdateOfferDto) {
-    return this.offersService.update(+id, updateOfferDto);
+  @Put(':id')
+  update(@OfferExists() id: number, @Body() updateOfferDto: UpdateOfferDto) {
+    return this.offersService.update(id, updateOfferDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.offersService.remove(+id);
+  remove(@OfferExists() id: number) {
+    return this.offersService.remove(id);
   }
 }
