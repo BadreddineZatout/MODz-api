@@ -7,8 +7,8 @@ import { UpdateOfferDto } from './dto/update-offer.dto';
 export class OffersService {
   constructor(private prisma: PrismaService) {}
 
-  create(createOfferDto: CreateOfferDto) {
-    return this.prisma.offer.create({
+  async create(createOfferDto: CreateOfferDto) {
+    return await this.prisma.offer.create({
       data: createOfferDto,
       include: {
         order: true,
@@ -24,8 +24,8 @@ export class OffersService {
     return `This action returns a #${id} offer`;
   }
 
-  update(id: number, updateOfferDto: UpdateOfferDto) {
-    return this.prisma.offer.update({
+  async update(id: number, updateOfferDto: UpdateOfferDto) {
+    return await this.prisma.offer.update({
       where: { id },
       data: updateOfferDto,
       include: {
@@ -34,7 +34,10 @@ export class OffersService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} offer`;
+  async remove(id: number) {
+    await this.prisma.offer.delete({
+      where: { id: id },
+    });
+    return { message: 'Offer deleted' };
   }
 }
