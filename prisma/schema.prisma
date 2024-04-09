@@ -213,11 +213,12 @@ model ItemOrder {
 }
 
 model Offer {
-  id          Int     @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   employee_id Int
   order_id    Int
-  can_travel  Boolean @default(true)
-  price       Float   @default(0.0)
+  can_travel  Boolean     @default(true)
+  price       Float       @default(0.0)
+  status      OfferStatus @default(PENDING)
 
   employee Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
   order    Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
@@ -277,4 +278,10 @@ enum OrderStatus {
   PROCESSING
   DONE
   CANCELLED
+}
+
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  REFUSED
 }

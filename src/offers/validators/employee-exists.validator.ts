@@ -5,19 +5,19 @@ import {
 } from 'class-validator';
 import { PrismaService } from 'src/prisma.service';
 
-@ValidatorConstraint({ name: 'categoryExists', async: true })
+@ValidatorConstraint({ name: 'employeeExists', async: true })
 @Injectable()
-export class CategoryExistsConstraint implements ValidatorConstraintInterface {
+export class EmployeeExistsConstraint implements ValidatorConstraintInterface {
   constructor(private readonly prisma: PrismaService) {}
 
   async validate(id: number) {
-    const category = await this.prisma.category.findFirst({
+    const employee = await this.prisma.employee.findFirst({
       where: { id: id },
     });
-    return category ? true : false;
+    return employee ? true : false;
   }
 
   defaultMessage() {
-    return 'Category with ID $value does not exist.';
+    return 'Employee with ID $value does not exist.';
   }
 }

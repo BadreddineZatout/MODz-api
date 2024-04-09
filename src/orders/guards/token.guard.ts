@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { extractTokenFromHeader } from 'src/utils/token';
 
 @Injectable()
-export class OrderGuard implements CanActivate {
+export class TokenGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
