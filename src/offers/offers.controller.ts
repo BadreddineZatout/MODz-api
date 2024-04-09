@@ -5,11 +5,13 @@ import {
   Get,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { TokenGuard } from 'src/orders/guards/token.guard';
 import { OfferExists } from './decorators/offer-exists.decorator';
 import { CreateOfferDto } from './dto/create-offer.dto';
+import { OfferQuery } from './dto/offer-query.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
 import { OffersService } from './offers.service';
 
@@ -24,8 +26,8 @@ export class OffersController {
   }
 
   @Get()
-  findAll() {
-    return this.offersService.findAll();
+  findAll(@Query() query: OfferQuery) {
+    return this.offersService.findAll(query);
   }
 
   @Get(':id')

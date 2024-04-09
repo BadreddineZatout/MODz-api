@@ -16,8 +16,56 @@ export class OffersService {
     });
   }
 
-  findAll() {
-    return `This action returns all offers`;
+  async findAll(query) {
+    const take = query.per_page ?? 10;
+
+    const offers = await this.prisma.offer.findMany({
+      skip: query.page ? (query.page - 1) * take : 0,
+      take,
+      where: {
+        employee_id: query.employee_id,
+        order_id: query.order_id,
+        status: query.status,
+        can_travel: query.can_travel,
+      },
+      include: {
+        order: {
+          include: {
+            category: true,
+            job_type: true,
+            client: true,
+            items: {
+              include: {
+                item: true,
+              },
+            },
+          },
+        },
+        employee: {
+          include: {
+            category: true,
+            state: true,
+            province: true,
+            media: true,
+          },
+        },
+      },
+    });
+
+    return offers.map((offer) => {
+      return {
+        ...offer,
+        order: {
+          ...offer.order,
+          items: offer.order.items.map((item) => {
+            return {
+              ...item.item,
+              quantity: item.quantity,
+            };
+          }),
+        },
+      };
+    });
   }
 
   async findOne(id: number) {
