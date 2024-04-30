@@ -31,6 +31,10 @@ export class UpdateOrderDto {
   @IsOptional()
   @IsArray()
   items: ItemDto[];
+
+  @IsOptional()
+  @IsDateString()
+  accepted_at: string;
 }
 
 class ItemDto {
