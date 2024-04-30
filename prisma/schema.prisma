@@ -48,7 +48,8 @@ model Employee {
   state       State        @relation(fields: [state_id], references: [id], onDelete: Cascade)
   profile     ProfileUser?
   media       Image[]      @relation("employeetoimage")
-  Offer       Offer[]
+  offers      Offer[]
+  orders      Order[]
 
   @@index([category_id], map: "employees_category_id_fkey")
   @@index([province_id], map: "employees_province_id_fkey")
@@ -193,12 +194,14 @@ model Order {
   status      OrderStatus @default(PENDING)
   is_urgent   Boolean     @default(false)
   accepted_at DateTime?
+  employee_id Int?
 
   client   Client      @relation(fields: [client_id], references: [id], onDelete: Cascade)
   category Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
   job_type JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
   items    ItemOrder[]
   Offer    Offer[]
+  employee Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)
 
   @@map("orders")
 }

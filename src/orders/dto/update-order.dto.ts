@@ -1,4 +1,5 @@
 import { OrderStatus } from '@prisma/client';
+import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
@@ -35,6 +36,10 @@ export class UpdateOrderDto {
   @IsOptional()
   @IsDateString()
   accepted_at: string;
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  employee_id: number;
 }
 
 class ItemDto {

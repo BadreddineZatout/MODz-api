@@ -123,6 +123,7 @@ export class OrdersService {
         accepted_at: updateOrderDto.accepted_at
           ? new Date(updateOrderDto.accepted_at)
           : updateOrderDto.accepted_at,
+        employee_id: updateOrderDto.employee_id,
       },
       include: {
         category: true,
