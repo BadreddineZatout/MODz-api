@@ -120,6 +120,9 @@ export class OrdersService {
         hour: updateOrderDto.hour,
         is_urgent: updateOrderDto.is_urgent,
         status: updateOrderDto.status,
+        accepted_at: updateOrderDto.accepted_at
+          ? new Date(updateOrderDto.accepted_at)
+          : updateOrderDto.accepted_at,
       },
       include: {
         category: true,

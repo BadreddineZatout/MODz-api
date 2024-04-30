@@ -191,6 +191,7 @@ model Order {
   job_type_id Int
   status      OrderStatus @default(PENDING)
   is_urgent   Boolean     @default(false)
+  accepted_at DateTime?
 
   client   Client      @relation(fields: [client_id], references: [id], onDelete: Cascade)
   category Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
