@@ -26,8 +26,8 @@ model Client {
   last_name  String
   phone      String
   status     Status       @default(PENDING)
-  profile    ProfileUser?
   Order      Order[]
+  profile    ProfileUser?
 
   @@map("clients")
 }
@@ -46,10 +46,10 @@ model Employee {
   category    Category     @relation(fields: [category_id], references: [id], onDelete: Cascade)
   province    Province     @relation(fields: [province_id], references: [id], onDelete: Cascade)
   state       State        @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  profile     ProfileUser?
-  media       Image[]      @relation("employeetoimage")
   offers      Offer[]
   orders      Order[]
+  profile     ProfileUser?
+  media       Image[]      @relation("employeetoimage")
 
   @@index([category_id], map: "employees_category_id_fkey")
   @@index([province_id], map: "employees_province_id_fkey")
@@ -75,11 +75,11 @@ model Category {
   description String
   urgent      Boolean    @default(false)
   employees   Employee[]
-  media       Image[]    @relation("categorytoimage")
-  Provider    Provider[]
-  job_types   JobType[]  @relation("category_jobtype")
   items       Item[]
   Order       Order[]
+  Provider    Provider[]
+  job_types   JobType[]  @relation("category_jobtype")
+  media       Image[]    @relation("categorytoimage")
 
   @@map("categories")
 }
@@ -101,8 +101,8 @@ model State {
   name      String
   name_ar   String
   employees Employee[]
-  provinces Province[]
   Provider  Provider[]
+  provinces Province[]
 
   @@map("states")
 }
@@ -115,8 +115,8 @@ model Province {
   city_name_ar String
   state_id     Int
   employees    Employee[]
-  state        State      @relation(fields: [state_id], references: [id], onDelete: Cascade)
   Provider     Provider[]
+  state        State      @relation(fields: [state_id], references: [id], onDelete: Cascade)
 
   @@index([state_id], map: "provinces_state_id_fkey")
   @@map("provinces")
@@ -138,22 +138,26 @@ model Provider {
   shop_name     String                @unique
   phone_number  String                @unique
   phone_number2 String?               @unique
+  social_media  ProviderSocialmedia[]
+  category      Category              @relation(fields: [category_id], references: [id], onDelete: Cascade)
   province      Province              @relation(fields: [province_id], references: [id], onDelete: Cascade)
   state         State                 @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  category      Category              @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  social_media  ProviderSocialmedia[]
 
+  @@index([category_id], map: "providers_category_id_fkey")
+  @@index([province_id], map: "providers_province_id_fkey")
+  @@index([state_id], map: "providers_state_id_fkey")
   @@map("providers")
 }
 
 model ProviderSocialmedia {
-  provider        Provider    @relation(fields: [provider_id], references: [id], onDelete: Cascade)
   provider_id     Int
-  social_media    SocialMedia @relation(fields: [social_media_id], references: [id], onDelete: Cascade)
   social_media_id Int
   link            String
+  provider        Provider    @relation(fields: [provider_id], references: [id], onDelete: Cascade)
+  social_media    SocialMedia @relation(fields: [social_media_id], references: [id], onDelete: Cascade)
 
   @@id([provider_id, social_media_id])
+  @@index([social_media_id], map: "provider_socialmedia_social_media_id_fkey")
   @@map("provider_socialmedia")
 }
 
@@ -161,9 +165,9 @@ model JobType {
   id         Int        @id @default(autoincrement())
   name       String     @unique
   has_items  Boolean    @default(false)
-  categories Category[] @relation("category_jobtype")
   items      Item[]
   Order      Order[]
+  categories Category[] @relation("category_jobtype")
 
   @@map("job_types")
 }
@@ -171,15 +175,17 @@ model JobType {
 model Item {
   id          Int         @id @default(autoincrement())
   name        String
-  unit        String      @default("unit")
-  min_price   Float       @default(0.0)
-  max_price   Float       @default(0.0)
+  min_price   Float       @default(0)
+  max_price   Float       @default(0)
   category_id Int
   job_type_id Int
+  unit        String      @default("unit")
+  orders      ItemOrder[]
   category    Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
   job_type    JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
-  orders      ItemOrder[]
 
+  @@index([category_id], map: "items_category_id_fkey")
+  @@index([job_type_id], map: "items_job_type_id_fkey")
   @@map("items")
 }
 
@@ -195,25 +201,29 @@ model Order {
   is_urgent   Boolean     @default(false)
   accepted_at DateTime?
   employee_id Int?
+  items       ItemOrder[]
+  Offer       Offer[]
+  category    Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  client      Client      @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  employee    Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  job_type    JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
 
-  client   Client      @relation(fields: [client_id], references: [id], onDelete: Cascade)
-  category Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  job_type JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
-  items    ItemOrder[]
-  Offer    Offer[]
-  employee Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)
-
+  @@index([category_id], map: "orders_category_id_fkey")
+  @@index([client_id], map: "orders_client_id_fkey")
+  @@index([employee_id], map: "orders_employee_id_fkey")
+  @@index([job_type_id], map: "orders_job_type_id_fkey")
   @@map("orders")
 }
 
 model ItemOrder {
-  item     Item  @relation(fields: [item_id], references: [id], onDelete: Cascade)
   item_id  Int
-  order    Order @relation(fields: [order_id], references: [id], onDelete: Cascade)
   order_id Int
   quantity Int   @default(1)
+  item     Item  @relation(fields: [item_id], references: [id], onDelete: Cascade)
+  order    Order @relation(fields: [order_id], references: [id], onDelete: Cascade)
 
   @@id([item_id, order_id])
+  @@index([order_id], map: "item_order_order_id_fkey")
   @@map("item_order")
 }
 
@@ -222,12 +232,13 @@ model Offer {
   employee_id Int
   order_id    Int
   can_travel  Boolean     @default(true)
-  price       Float       @default(0.0)
+  price       Float       @default(0)
   status      OfferStatus @default(PENDING)
+  employee    Employee    @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  order       Order       @relation(fields: [order_id], references: [id], onDelete: Cascade)
 
-  employee Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
-  order    Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
-
+  @@index([employee_id], map: "offers_employee_id_fkey")
+  @@index([order_id], map: "offers_order_id_fkey")
   @@map("offers")
 }
 
@@ -260,6 +271,60 @@ model migrations {
   id        Int    @id @default(autoincrement()) @db.UnsignedInt
   migration String @db.VarChar(255)
   batch     Int
+}
+
+model model_has_permissions {
+  permission_id BigInt      @db.UnsignedBigInt
+  model_type    String      @db.VarChar(255)
+  model_id      BigInt      @db.UnsignedBigInt
+  permissions   permissions @relation(fields: [permission_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "model_has_permissions_permission_id_foreign")
+
+  @@id([permission_id, model_id, model_type])
+  @@index([model_id, model_type], map: "model_has_permissions_model_id_model_type_index")
+}
+
+model model_has_roles {
+  role_id    BigInt @db.UnsignedBigInt
+  model_type String @db.VarChar(255)
+  model_id   BigInt @db.UnsignedBigInt
+  roles      roles  @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "model_has_roles_role_id_foreign")
+
+  @@id([role_id, model_id, model_type])
+  @@index([model_id, model_type], map: "model_has_roles_model_id_model_type_index")
+}
+
+model permissions {
+  id                    BigInt                  @id @default(autoincrement()) @db.UnsignedBigInt
+  name                  String                  @db.VarChar(255)
+  guard_name            String                  @db.VarChar(255)
+  created_at            DateTime?               @db.Timestamp(0)
+  updated_at            DateTime?               @db.Timestamp(0)
+  model_has_permissions model_has_permissions[]
+  role_has_permissions  role_has_permissions[]
+
+  @@unique([name, guard_name], map: "permissions_name_guard_name_unique")
+}
+
+model role_has_permissions {
+  permission_id BigInt      @db.UnsignedBigInt
+  role_id       BigInt      @db.UnsignedBigInt
+  permissions   permissions @relation(fields: [permission_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "role_has_permissions_permission_id_foreign")
+  roles         roles       @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "role_has_permissions_role_id_foreign")
+
+  @@id([permission_id, role_id])
+  @@index([role_id], map: "role_has_permissions_role_id_foreign")
+}
+
+model roles {
+  id                   BigInt                 @id @default(autoincrement()) @db.UnsignedBigInt
+  name                 String                 @db.VarChar(255)
+  guard_name           String                 @db.VarChar(255)
+  created_at           DateTime?              @db.Timestamp(0)
+  updated_at           DateTime?              @db.Timestamp(0)
+  model_has_roles      model_has_roles[]
+  role_has_permissions role_has_permissions[]
+
+  @@unique([name, guard_name], map: "roles_name_guard_name_unique")
 }
 
 enum Role {
