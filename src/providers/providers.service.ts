@@ -23,18 +23,34 @@ export class ProvidersService {
       },
     });
 
-    return providers.map((provider) => {
-      return {
-        ...provider,
-        social_media: provider.social_media.map((social_media) => {
-          return {
-            id: social_media.social_media_id,
-            name: social_media.social_media.name,
-            link: social_media.link,
-          };
-        }),
-      };
-    });
+    return Promise.all(
+      providers.map(async (provider) => {
+        const media = await this.prisma.media.findMany({
+          where: {
+            model_type: 'App\\Models\\Provider',
+            model_id: provider.id,
+          },
+        });
+        return {
+          ...provider,
+          social_media: provider.social_media.map((social_media) => {
+            return {
+              id: social_media.social_media_id,
+              name: social_media.social_media.name,
+              link: social_media.link,
+            };
+          }),
+          media: media.map((media) => {
+            return {
+              id: Number(media.id),
+              name: media.file_name,
+              path: `${process.env.ADMIN_URL}/storage/${media.id}/${media.file_name}`,
+              type: 'PROVIDER',
+            };
+          }),
+        };
+      }),
+    );
   }
 
   async getProvider(id: number) {
@@ -52,6 +68,13 @@ export class ProvidersService {
       },
     });
 
+    const media = await this.prisma.media.findMany({
+      where: {
+        model_type: 'App\\Models\\Provider',
+        model_id: provider.id,
+      },
+    });
+
     return {
       ...provider,
       social_media: provider.social_media.map((social_media) => {
@@ -59,6 +82,14 @@ export class ProvidersService {
           id: social_media.social_media_id,
           name: social_media.social_media.name,
           link: social_media.link,
+        };
+      }),
+      media: media.map((media) => {
+        return {
+          id: Number(media.id),
+          name: media.file_name,
+          path: `${process.env.ADMIN_URL}/storage/${media.id}/${media.file_name}`,
+          type: 'PROVIDER',
         };
       }),
     };

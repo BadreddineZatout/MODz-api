@@ -138,10 +138,12 @@ model Provider {
   shop_name     String                @unique
   phone_number  String                @unique
   phone_number2 String?               @unique
+  description   String?               @db.Text
   social_media  ProviderSocialmedia[]
   category      Category              @relation(fields: [category_id], references: [id], onDelete: Cascade)
   province      Province              @relation(fields: [province_id], references: [id], onDelete: Cascade)
   state         State                 @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  media         media[]
 
   @@index([category_id], map: "providers_category_id_fkey")
   @@index([province_id], map: "providers_province_id_fkey")
@@ -262,6 +264,8 @@ model media {
   order_column          Int?      @db.UnsignedInt
   created_at            DateTime? @db.Timestamp(0)
   updated_at            DateTime? @db.Timestamp(0)
+  Provider              Provider? @relation(fields: [providerId], references: [id])
+  providerId            Int?
 
   @@index([model_type, model_id], map: "media_model_type_model_id_index")
   @@index([order_column], map: "media_order_column_index")
