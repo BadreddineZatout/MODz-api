@@ -33,23 +33,24 @@ model Client {
 }
 
 model Employee {
-  id          Int          @id @default(autoincrement())
-  first_name  String
-  last_name   String
-  phone       String
-  state_id    Int
-  province_id Int
-  category_id Int
-  is_active   Boolean
-  status      Status       @default(PENDING)
-  national_id String?
-  category    Category     @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  province    Province     @relation(fields: [province_id], references: [id], onDelete: Cascade)
-  state       State        @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  offers      Offer[]
-  orders      Order[]
-  profile     ProfileUser?
-  media       Image[]      @relation("employeetoimage")
+  id            Int            @id @default(autoincrement())
+  first_name    String
+  last_name     String
+  phone         String
+  state_id      Int
+  province_id   Int
+  category_id   Int
+  is_active     Boolean
+  status        Status         @default(PENDING)
+  national_id   String?
+  category      Category       @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  province      Province       @relation(fields: [province_id], references: [id], onDelete: Cascade)
+  state         State          @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  constructinos Construction[] @relation("construction_employee")
+  offers        Offer[]
+  orders        Order[]
+  profile       ProfileUser?
+  media         Image[]        @relation("employeetoimage")
 
   @@index([category_id], map: "employees_category_id_fkey")
   @@index([province_id], map: "employees_province_id_fkey")
@@ -69,17 +70,18 @@ model ProfileUser {
 }
 
 model Category {
-  id          Int        @id @default(autoincrement())
-  name        String
-  profession  String
-  description String
-  urgent      Boolean    @default(false)
-  employees   Employee[]
-  items       Item[]
-  Order       Order[]
-  Provider    Provider[]
-  job_types   JobType[]  @relation("category_jobtype")
-  media       Image[]    @relation("categorytoimage")
+  id            Int            @id @default(autoincrement())
+  name          String
+  profession    String
+  description   String         @db.Text
+  urgent        Boolean        @default(false)
+  employees     Employee[]
+  items         Item[]
+  Order         Order[]
+  Provider      Provider[]
+  job_types     JobType[]      @relation("category_jobtype")
+  media         Image[]        @relation("categorytoimage")
+  constructions Construction[] @relation("category_construction")
 
   @@map("categories")
 }
@@ -194,7 +196,7 @@ model Item {
 model Order {
   id          Int         @id @default(autoincrement())
   client_id   Int
-  description String?
+  description String?     @db.Text
   date        DateTime
   hour        String
   category_id Int
@@ -242,6 +244,42 @@ model Offer {
   @@index([employee_id], map: "offers_employee_id_fkey")
   @@index([order_id], map: "offers_order_id_fkey")
   @@map("offers")
+}
+
+model Group {
+  id            Int            @id @default(autoincrement())
+  name          String
+  constructions Construction[] @relation("construction_group")
+
+  @@map("groups")
+}
+
+model EmployeeGroup {
+  group_id    Int
+  employee_id Int
+  is_leader   Boolean
+
+  @@id([group_id, employee_id])
+  @@map("emplopyee_group")
+}
+
+model Construction {
+  id           Int              @id @default(autoincrement())
+  client_id    Int
+  description  String?          @db.Text
+  date         DateTime
+  hour         String
+  type         ConstructionType
+  floors_nbr   Int?
+  chambres_nbr Int?
+  status       OrderStatus      @default(PENDING)
+  accepted_at  DateTime?
+
+  categories Category[] @relation("category_construction")
+  employees  Employee[] @relation("construction_employee")
+  groups     Group[]    @relation("construction_group")
+
+  @@map("constructions")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -380,4 +418,9 @@ enum OfferStatus {
   PENDING
   ACCEPTED
   REFUSED
+}
+
+enum ConstructionType {
+  NEW
+  RENOVATION
 }
