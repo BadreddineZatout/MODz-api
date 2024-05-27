@@ -139,11 +139,11 @@ model Provider {
   phone_number  String                @unique
   phone_number2 String?               @unique
   description   String?               @db.Text
+  media         media[]
   social_media  ProviderSocialmedia[]
   category      Category              @relation(fields: [category_id], references: [id], onDelete: Cascade)
   province      Province              @relation(fields: [province_id], references: [id], onDelete: Cascade)
   state         State                 @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  media         media[]
 
   @@index([category_id], map: "providers_category_id_fkey")
   @@index([province_id], map: "providers_province_id_fkey")
@@ -264,11 +264,12 @@ model media {
   order_column          Int?      @db.UnsignedInt
   created_at            DateTime? @db.Timestamp(0)
   updated_at            DateTime? @db.Timestamp(0)
-  Provider              Provider? @relation(fields: [providerId], references: [id])
   providerId            Int?
+  Provider              Provider? @relation(fields: [providerId], references: [id])
 
   @@index([model_type, model_id], map: "media_model_type_model_id_index")
   @@index([order_column], map: "media_order_column_index")
+  @@index([providerId], map: "media_providerId_fkey")
 }
 
 model migrations {
@@ -329,6 +330,25 @@ model roles {
   role_has_permissions role_has_permissions[]
 
   @@unique([name, guard_name], map: "roles_name_guard_name_unique")
+}
+
+model activity_log {
+  id           BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  log_name     String?   @db.VarChar(255)
+  description  String    @db.Text
+  subject_type String?   @db.VarChar(255)
+  event        String?   @db.VarChar(255)
+  subject_id   BigInt?   @db.UnsignedBigInt
+  causer_type  String?   @db.VarChar(255)
+  causer_id    BigInt?   @db.UnsignedBigInt
+  properties   Json?
+  batch_uuid   String?   @db.Char(36)
+  created_at   DateTime? @db.Timestamp(0)
+  updated_at   DateTime? @db.Timestamp(0)
+
+  @@index([log_name], map: "activity_log_log_name_index")
+  @@index([causer_type, causer_id], map: "causer")
+  @@index([subject_type, subject_id], map: "subject")
 }
 
 enum Role {
