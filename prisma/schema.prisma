@@ -21,13 +21,14 @@ model User {
 }
 
 model Client {
-  id         Int          @id @default(autoincrement())
-  first_name String
-  last_name  String
-  phone      String
-  status     Status       @default(PENDING)
-  Order      Order[]
-  profile    ProfileUser?
+  id           Int            @id @default(autoincrement())
+  first_name   String
+  last_name    String
+  phone        String
+  status       Status         @default(PENDING)
+  Order        Order[]
+  profile      ProfileUser?
+  Construction Construction[]
 
   @@map("clients")
 }
@@ -279,6 +280,7 @@ model Construction {
   status       OrderStatus      @default(PENDING)
   accepted_at  DateTime?
 
+  client     Client     @relation(fields: [client_id], references: [id], onDelete: Cascade)
   categories Category[] @relation("category_construction")
   employees  Employee[] @relation("construction_employee")
   groups     Group[]    @relation("construction_group")
