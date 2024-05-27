@@ -33,7 +33,7 @@ model Client {
 }
 
 model Employee {
-  id            Int            @id @default(autoincrement())
+  id            Int             @id @default(autoincrement())
   first_name    String
   last_name     String
   phone         String
@@ -41,16 +41,17 @@ model Employee {
   province_id   Int
   category_id   Int
   is_active     Boolean
-  status        Status         @default(PENDING)
+  status        Status          @default(PENDING)
   national_id   String?
-  category      Category       @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  province      Province       @relation(fields: [province_id], references: [id], onDelete: Cascade)
-  state         State          @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  constructinos Construction[] @relation("construction_employee")
+  category      Category        @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  province      Province        @relation(fields: [province_id], references: [id], onDelete: Cascade)
+  state         State           @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  groups        EmployeeGroup[]
+  constructinos Construction[]  @relation("construction_employee")
   offers        Offer[]
   orders        Order[]
   profile       ProfileUser?
-  media         Image[]        @relation("employeetoimage")
+  media         Image[]         @relation("employeetoimage")
 
   @@index([category_id], map: "employees_category_id_fkey")
   @@index([province_id], map: "employees_province_id_fkey")
@@ -247,9 +248,10 @@ model Offer {
 }
 
 model Group {
-  id            Int            @id @default(autoincrement())
+  id            Int             @id @default(autoincrement())
   name          String
-  constructions Construction[] @relation("construction_group")
+  employees     EmployeeGroup[]
+  constructions Construction[]  @relation("construction_group")
 
   @@map("groups")
 }
@@ -258,6 +260,8 @@ model EmployeeGroup {
   group_id    Int
   employee_id Int
   is_leader   Boolean
+  Employee    Employee? @relation(fields: [employee_id], references: [id])
+  Group       Group?    @relation(fields: [group_id], references: [id])
 
   @@id([group_id, employee_id])
   @@map("emplopyee_group")
