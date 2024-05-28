@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateProblemDto } from './dto/create-problem.dto';
 import { ProblemQuery } from './dto/problems-query.dto';
@@ -7,8 +7,25 @@ import { UpdateProblemDto } from './dto/update-problem.dto';
 @Injectable()
 export class ProblemsService {
   constructor(private prisma: PrismaService) {}
-  create(createProblemDto: CreateProblemDto) {
-    return 'This action adds a new problem';
+  async create(createProblemDto: CreateProblemDto) {
+    const { order_id, construction_id } = createProblemDto;
+    if (!order_id && !construction_id) {
+      throw new HttpException(
+        {
+          message: 'You should choose an order or a construction job',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return await this.prisma.problem.create({
+      data: createProblemDto,
+      include: {
+        client: true,
+        employee: true,
+        order: true,
+        construction: true,
+      },
+    });
   }
 
   async findAll(query: ProblemQuery) {
