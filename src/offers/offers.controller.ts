@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { TokenGuard } from 'src/orders/guards/token.guard';
+import { Owner } from 'src/users/decorators/owner.decorator';
 import { OfferExists } from './decorators/offer-exists.decorator';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { OfferQuery } from './dto/offer-query.dto';
@@ -36,12 +37,16 @@ export class OffersController {
   }
 
   @Put(':id')
-  update(@OfferExists() id: number, @Body() updateOfferDto: UpdateOfferDto) {
-    return this.offersService.update(id, updateOfferDto);
+  update(
+    @OfferExists() id: number,
+    @Body() updateOfferDto: UpdateOfferDto,
+    @Owner() owner: number,
+  ) {
+    return this.offersService.update(id, updateOfferDto, owner);
   }
 
   @Delete(':id')
-  remove(@OfferExists() id: number) {
-    return this.offersService.remove(id);
+  remove(@OfferExists() id: number, @Owner() owner: number) {
+    return this.offersService.remove(id, owner);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
@@ -109,7 +109,20 @@ export class OffersService {
     };
   }
 
-  async update(id: number, updateOfferDto: UpdateOfferDto) {
+  async update(id: number, updateOfferDto: UpdateOfferDto, owner: number) {
+    const offer = await this.prisma.offer.findFirst({
+      where: {
+        id,
+        employee_id: owner,
+      },
+    });
+    if (!offer || !owner)
+      throw new HttpException(
+        {
+          message: "You can't update an offer you don't own",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     return await this.prisma.offer.update({
       where: { id },
       data: updateOfferDto,
@@ -119,7 +132,20 @@ export class OffersService {
     });
   }
 
-  async remove(id: number) {
+  async remove(id: number, owner: number) {
+    const offer = await this.prisma.offer.findFirst({
+      where: {
+        id,
+        employee_id: owner,
+      },
+    });
+    if (!offer || !owner)
+      throw new HttpException(
+        {
+          message: "You can't delete an offer you don't own",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     await this.prisma.offer.delete({
       where: { id: id },
     });
