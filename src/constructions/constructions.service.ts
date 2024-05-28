@@ -103,7 +103,24 @@ export class ConstructionsService {
     });
   }
 
-  async update(id: number, updateConstructionDto: UpdateConstructionDto) {
+  async update(
+    id: number,
+    updateConstructionDto: UpdateConstructionDto,
+    owner: number,
+  ) {
+    const construction = await this.prisma.construction.findFirst({
+      where: {
+        id,
+        client_id: owner,
+      },
+    });
+    if (!construction || !owner)
+      throw new HttpException(
+        {
+          message: "You can't update a construction job you don't own",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     return await this.prisma.construction.update({
       where: { id },
       data: {
@@ -141,9 +158,22 @@ export class ConstructionsService {
     });
   }
 
-  async remove(id: number) {
-    return this.prisma.construction.delete({
-      where: { id },
+  async remove(id: number, owner: number) {
+    const construction = await this.prisma.construction.findFirst({
+      where: {
+        id,
+        client_id: owner,
+      },
+    });
+    if (!construction || !owner)
+      throw new HttpException(
+        {
+          message: "You can't delete a construction job you don't own",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    return await this.prisma.construction.delete({
+      where: { id, client_id: owner },
     });
   }
 }

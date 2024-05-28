@@ -9,7 +9,7 @@ import { PrismaService } from 'src/prisma.service';
 export const OrderExists = createParamDecorator(
   async (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
-    const prisma = new PrismaService();
+    let prisma = new PrismaService();
     const { id } = request.params;
 
     const order = await prisma.order.findFirst({ where: { id: parseInt(id) } });
@@ -22,6 +22,7 @@ export const OrderExists = createParamDecorator(
         HttpStatus.BAD_REQUEST,
       );
     }
+    prisma = null;
     return parseInt(id);
   },
 );
