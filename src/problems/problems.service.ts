@@ -46,7 +46,9 @@ export class ProblemsService {
     return `This action updates a #${id} problem`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} problem`;
+  async remove(id: number) {
+    return await this.prisma.problem.delete({
+      where: { id },
+    });
   }
 }
