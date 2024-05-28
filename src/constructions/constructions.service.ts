@@ -139,7 +139,6 @@ export class ConstructionsService {
         },
       },
     });
-    return `This action updates a #${id} construction`;
   }
 
   async remove(id: number) {
