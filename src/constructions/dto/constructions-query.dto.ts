@@ -1,6 +1,8 @@
 import { ConstructionType, OrderStatus } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, Min } from 'class-validator';
+import { GroupExists } from 'src/groups/decorators/group-exists.decorator';
+import { EmployeeExists } from 'src/offers/decorators/employee-exists.decorator';
 import { CategoryExists } from 'src/orders/decorators/category-exists.decorator';
 import { ClientExists } from 'src/orders/decorators/client-exists.decorator';
 
@@ -20,6 +22,18 @@ export class ConstructionQuery {
   @Min(1)
   @ClientExists()
   client_id: number;
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  @Min(1)
+  @EmployeeExists()
+  employee_id: number;
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  @Min(1)
+  @GroupExists()
+  group_id: number;
 
   @IsOptional()
   @Transform(({ value }) => parseInt(value))

@@ -8,6 +8,7 @@ import {
   IsString,
   Min,
 } from 'class-validator';
+import { GroupExists } from 'src/groups/decorators/group-exists.decorator';
 import { EmployeeExists } from 'src/offers/decorators/employee-exists.decorator';
 import { ClientExists } from 'src/orders/decorators/client-exists.decorator';
 
@@ -40,6 +41,7 @@ export class CreateConstructionDto {
   @Transform(({ value }) => parseInt(value))
   @IsOptional()
   @Min(1)
+  @GroupExists()
   group: number;
 
   @IsOptional()

@@ -19,6 +19,8 @@ export class ConstructionsService {
       take,
       where: {
         client_id: query.client_id,
+        employee_id: query.employee_id,
+        group_id: query.group_id,
         type: query.type,
         status: query.status,
         categories: query.category_id && {
