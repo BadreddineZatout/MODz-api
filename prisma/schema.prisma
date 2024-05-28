@@ -21,35 +21,38 @@ model User {
 }
 
 model Client {
-  id         Int          @id @default(autoincrement())
-  first_name String
-  last_name  String
-  phone      String
-  status     Status       @default(PENDING)
-  Order      Order[]
-  profile    ProfileUser?
+  id           Int            @id @default(autoincrement())
+  first_name   String
+  last_name    String
+  phone        String
+  status       Status         @default(PENDING)
+  Order        Order[]
+  profile      ProfileUser?
+  Construction Construction[]
 
   @@map("clients")
 }
 
 model Employee {
-  id          Int          @id @default(autoincrement())
-  first_name  String
-  last_name   String
-  phone       String
-  state_id    Int
-  province_id Int
-  category_id Int
-  is_active   Boolean
-  status      Status       @default(PENDING)
-  national_id String?
-  category    Category     @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  province    Province     @relation(fields: [province_id], references: [id], onDelete: Cascade)
-  state       State        @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  offers      Offer[]
-  orders      Order[]
-  profile     ProfileUser?
-  media       Image[]      @relation("employeetoimage")
+  id            Int             @id @default(autoincrement())
+  first_name    String
+  last_name     String
+  phone         String
+  state_id      Int
+  province_id   Int
+  category_id   Int
+  is_active     Boolean
+  status        Status          @default(PENDING)
+  national_id   String?
+  category      Category        @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  province      Province        @relation(fields: [province_id], references: [id], onDelete: Cascade)
+  state         State           @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  groups        EmployeeGroup[]
+  offers        Offer[]
+  orders        Order[]
+  profile       ProfileUser?
+  media         Image[]         @relation("employeetoimage")
+  constructions Construction[]
 
   @@index([category_id], map: "employees_category_id_fkey")
   @@index([province_id], map: "employees_province_id_fkey")
@@ -69,17 +72,18 @@ model ProfileUser {
 }
 
 model Category {
-  id          Int        @id @default(autoincrement())
-  name        String
-  profession  String
-  description String
-  urgent      Boolean    @default(false)
-  employees   Employee[]
-  items       Item[]
-  Order       Order[]
-  Provider    Provider[]
-  job_types   JobType[]  @relation("category_jobtype")
-  media       Image[]    @relation("categorytoimage")
+  id            Int            @id @default(autoincrement())
+  name          String
+  profession    String
+  description   String         @db.Text
+  urgent        Boolean        @default(false)
+  employees     Employee[]
+  items         Item[]
+  Order         Order[]
+  Provider      Provider[]
+  job_types     JobType[]      @relation("category_jobtype")
+  media         Image[]        @relation("categorytoimage")
+  constructions Construction[] @relation("category_construction")
 
   @@map("categories")
 }
@@ -194,7 +198,7 @@ model Item {
 model Order {
   id          Int         @id @default(autoincrement())
   client_id   Int
-  description String?
+  description String?     @db.Text
   date        DateTime
   hour        String
   category_id Int
@@ -242,6 +246,48 @@ model Offer {
   @@index([employee_id], map: "offers_employee_id_fkey")
   @@index([order_id], map: "offers_order_id_fkey")
   @@map("offers")
+}
+
+model Group {
+  id            Int             @id @default(autoincrement())
+  name          String
+  employees     EmployeeGroup[]
+  constructions Construction[]
+
+  @@map("groups")
+}
+
+model EmployeeGroup {
+  group_id    Int
+  employee_id Int
+  is_leader   Boolean
+  employee    Employee? @relation(fields: [employee_id], references: [id])
+  group       Group?    @relation(fields: [group_id], references: [id])
+
+  @@id([group_id, employee_id])
+  @@map("emplopyee_group")
+}
+
+model Construction {
+  id           Int              @id @default(autoincrement())
+  client_id    Int
+  description  String?          @db.Text
+  date         DateTime
+  hour         String
+  type         ConstructionType
+  floors_nbr   Int?
+  chambers_nbr Int?
+  status       OrderStatus      @default(PENDING)
+  employee_id  Int?
+  group_id     Int?
+  accepted_at  DateTime?
+
+  client     Client     @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  categories Category[] @relation("category_construction")
+  employee   Employee?  @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  group      Group?     @relation(fields: [group_id], references: [id], onDelete: Cascade)
+
+  @@map("constructions")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -380,4 +426,9 @@ enum OfferStatus {
   PENDING
   ACCEPTED
   REFUSED
+}
+
+enum ConstructionType {
+  NEW
+  RENOVATION
 }
