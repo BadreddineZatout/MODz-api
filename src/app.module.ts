@@ -6,10 +6,10 @@ import { GroupsModule } from './groups/groups.module';
 import { OffersModule } from './offers/offers.module';
 import { OrdersModule } from './orders/orders.module';
 import { PrismaService } from './prisma.service';
+import { ProblemsModule } from './problems/problems.module';
 import { ProvidersModule } from './providers/providers.module';
 import { StatesModule } from './states/states.module';
 import { UsersModule } from './users/users.module';
-import { ProblemsModule } from './problems/problems.module';
 
 @Module({
   imports: [

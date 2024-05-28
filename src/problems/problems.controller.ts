@@ -1,9 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ProblemsService } from './problems.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { TokenGuard } from 'src/orders/guards/token.guard';
 import { CreateProblemDto } from './dto/create-problem.dto';
+import { ProblemQuery } from './dto/problems-query.dto';
 import { UpdateProblemDto } from './dto/update-problem.dto';
+import { ProblemsService } from './problems.service';
 
 @Controller('problems')
+@UseGuards(TokenGuard)
 export class ProblemsController {
   constructor(private readonly problemsService: ProblemsService) {}
 
@@ -13,22 +27,25 @@ export class ProblemsController {
   }
 
   @Get()
-  findAll() {
-    return this.problemsService.findAll();
+  findAll(@Query() query: ProblemQuery) {
+    return this.problemsService.findAll(query);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.problemsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.problemsService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProblemDto: UpdateProblemDto) {
-    return this.problemsService.update(+id, updateProblemDto);
+  @Put(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateProblemDto: UpdateProblemDto,
+  ) {
+    return this.problemsService.update(id, updateProblemDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.problemsService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.problemsService.remove(id);
   }
 }

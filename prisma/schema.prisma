@@ -29,6 +29,7 @@ model Client {
   Order        Order[]
   profile      ProfileUser?
   Construction Construction[]
+  problems     Problem[]
 
   @@map("clients")
 }
@@ -53,6 +54,7 @@ model Employee {
   profile       ProfileUser?
   media         Image[]         @relation("employeetoimage")
   constructions Construction[]
+  problems      Problem[]
 
   @@index([category_id], map: "employees_category_id_fkey")
   @@index([province_id], map: "employees_province_id_fkey")
@@ -213,6 +215,7 @@ model Order {
   client      Client      @relation(fields: [client_id], references: [id], onDelete: Cascade)
   employee    Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)
   job_type    JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
+  problems    Problem[]
 
   @@index([category_id], map: "orders_category_id_fkey")
   @@index([client_id], map: "orders_client_id_fkey")
@@ -286,6 +289,7 @@ model Construction {
   categories Category[] @relation("category_construction")
   employee   Employee?  @relation(fields: [employee_id], references: [id], onDelete: Cascade)
   group      Group?     @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  problems   Problem[]
 
   @@map("constructions")
 }
@@ -300,6 +304,11 @@ model Problem {
   description     String   @db.Text
   reporter        Reporter
   is_treated      Boolean  @default(false)
+
+  client       Client        @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  employee     Employee      @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  order        Order?        @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  construction Construction? @relation(fields: [construction_id], references: [id], onDelete: Cascade)
 
   @@map("problems")
 }
