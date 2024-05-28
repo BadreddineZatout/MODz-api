@@ -10,7 +10,7 @@ export class GroupsService {
       include: {
         employees: {
           include: {
-            Employee: {
+            employee: {
               include: { category: true, state: true, province: true },
             },
           },
@@ -25,7 +25,7 @@ export class GroupsService {
       include: {
         employees: {
           include: {
-            Employee: {
+            employee: {
               include: { category: true, state: true, province: true },
             },
           },

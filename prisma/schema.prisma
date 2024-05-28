@@ -261,8 +261,8 @@ model EmployeeGroup {
   group_id    Int
   employee_id Int
   is_leader   Boolean
-  Employee    Employee? @relation(fields: [employee_id], references: [id])
-  Group       Group?    @relation(fields: [group_id], references: [id])
+  employee    Employee? @relation(fields: [employee_id], references: [id])
+  group       Group?    @relation(fields: [group_id], references: [id])
 
   @@id([group_id, employee_id])
   @@map("emplopyee_group")
@@ -284,8 +284,8 @@ model Construction {
 
   client     Client     @relation(fields: [client_id], references: [id], onDelete: Cascade)
   categories Category[] @relation("category_construction")
-  Employee   Employee?  @relation(fields: [employee_id], references: [id], onDelete: Cascade)
-  Group      Group?     @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  employee   Employee?  @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  group      Group?     @relation(fields: [group_id], references: [id], onDelete: Cascade)
 
   @@map("constructions")
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { ConstructionQuery } from './dto/constructions-query.dto';
 import { CreateConstructionDto } from './dto/create-construction.dto';
@@ -8,8 +8,45 @@ import { UpdateConstructionDto } from './dto/update-construction.dto';
 export class ConstructionsService {
   constructor(private prisma: PrismaService) {}
 
-  create(createConstructionDto: CreateConstructionDto) {
-    return 'This action adds a new construction';
+  async create(createConstructionDto: CreateConstructionDto) {
+    const { employee_id, group_id } = createConstructionDto;
+    if (!employee_id && !group_id) {
+      throw new HttpException(
+        {
+          message: 'You should choose an employee or a group',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return await this.prisma.construction.create({
+      data: {
+        client_id: createConstructionDto.client_id,
+        description: createConstructionDto.description,
+        date: new Date(createConstructionDto.date),
+        hour: createConstructionDto.hour,
+        type: createConstructionDto.type,
+        floors_nbr: createConstructionDto.floors_nbr,
+        chambers_nbr: createConstructionDto.chambers_nbr,
+        employee_id: createConstructionDto.employee_id,
+        group_id: createConstructionDto.group_id,
+        categories: {
+          connect: createConstructionDto.categories,
+        },
+      },
+      include: {
+        categories: true,
+        employee: true,
+        group: {
+          include: {
+            employees: {
+              include: {
+                employee: true,
+              },
+            },
+          },
+        },
+      },
+    });
   }
 
   async findAll(query: ConstructionQuery) {
@@ -32,12 +69,12 @@ export class ConstructionsService {
       include: {
         client: true,
         categories: true,
-        Employee: true,
-        Group: {
+        employee: true,
+        group: {
           include: {
             employees: {
               include: {
-                Employee: true,
+                employee: true,
               },
             },
           },
@@ -52,12 +89,12 @@ export class ConstructionsService {
       include: {
         client: true,
         categories: true,
-        Employee: true,
-        Group: {
+        employee: true,
+        group: {
           include: {
             employees: {
               include: {
-                Employee: true,
+                employee: true,
               },
             },
           },

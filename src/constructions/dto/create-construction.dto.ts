@@ -28,23 +28,26 @@ export class CreateConstructionDto {
   @IsString()
   hour: string;
 
-  @Transform(({ value }) => parseInt(value))
+  @Transform(({ value }) =>
+    value.map((item) => {
+      return { id: item };
+    }),
+  )
   @IsArray()
-  categories: number[];
+  categories: { id: number }[];
 
   @Transform(({ value }) => parseInt(value))
   @IsOptional()
   @Min(1)
   @EmployeeExists()
-  emlpoyee: number;
+  employee_id: number;
 
   @Transform(({ value }) => parseInt(value))
   @IsOptional()
   @Min(1)
   @GroupExists()
-  group: number;
+  group_id: number;
 
-  @IsOptional()
   @IsString()
   @IsEnum(ConstructionType)
   type: ConstructionType;
