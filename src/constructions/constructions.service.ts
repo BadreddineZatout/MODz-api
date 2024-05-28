@@ -103,7 +103,42 @@ export class ConstructionsService {
     });
   }
 
-  update(id: number, updateConstructionDto: UpdateConstructionDto) {
+  async update(id: number, updateConstructionDto: UpdateConstructionDto) {
+    return await this.prisma.construction.update({
+      where: { id },
+      data: {
+        description: updateConstructionDto.description,
+        date: updateConstructionDto.date
+          ? new Date(updateConstructionDto.date)
+          : updateConstructionDto.date,
+        hour: updateConstructionDto.hour,
+        type: updateConstructionDto.type,
+        status: updateConstructionDto.status,
+        floors_nbr: updateConstructionDto.floors_nbr,
+        chambers_nbr: updateConstructionDto.chambers_nbr,
+        accepted_at: updateConstructionDto.accepted_at
+          ? new Date(updateConstructionDto.accepted_at)
+          : updateConstructionDto.accepted_at,
+        employee_id: updateConstructionDto.employee_id,
+        group_id: updateConstructionDto.group_id,
+        categories: updateConstructionDto.categories && {
+          set: updateConstructionDto.categories,
+        },
+      },
+      include: {
+        categories: true,
+        employee: true,
+        group: {
+          include: {
+            employees: {
+              include: {
+                employee: true,
+              },
+            },
+          },
+        },
+      },
+    });
     return `This action updates a #${id} construction`;
   }
 

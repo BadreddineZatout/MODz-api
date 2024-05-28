@@ -5,8 +5,8 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -36,12 +36,12 @@ export class ConstructionsController {
     return this.constructionsService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateConstructionDto: UpdateConstructionDto,
   ) {
-    return this.constructionsService.update(+id, updateConstructionDto);
+    return this.constructionsService.update(id, updateConstructionDto);
   }
 
   @Delete(':id')
