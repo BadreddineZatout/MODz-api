@@ -59,8 +59,17 @@ export class ProblemsService {
     });
   }
 
-  update(id: number, updateProblemDto: UpdateProblemDto) {
-    return `This action updates a #${id} problem`;
+  async update(id: number, updateProblemDto: UpdateProblemDto) {
+    return await this.prisma.problem.update({
+      where: { id },
+      data: updateProblemDto,
+      include: {
+        client: true,
+        employee: true,
+        order: true,
+        construction: true,
+      },
+    });
   }
 
   async remove(id: number) {
