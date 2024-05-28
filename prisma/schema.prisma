@@ -290,6 +290,20 @@ model Construction {
   @@map("constructions")
 }
 
+model Problem {
+  id              Int      @id @default(autoincrement())
+  client_id       Int
+  employee_id     Int
+  report_date     DateTime @default(now())
+  order_id        Int?
+  construction_id Int?
+  description     String   @db.Text
+  reporter        Reporter
+  is_treated      Boolean  @default(false)
+
+  @@map("problems")
+}
+
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model media {
   id                    BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
@@ -431,4 +445,9 @@ enum OfferStatus {
 enum ConstructionType {
   NEW
   RENOVATION
+}
+
+enum Reporter {
+  CLIENT
+  EMPLOYEE
 }
