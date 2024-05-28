@@ -45,7 +45,7 @@ export class ConstructionsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.constructionsService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.constructionsService.remove(id);
   }
 }

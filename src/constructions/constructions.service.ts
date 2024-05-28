@@ -12,9 +12,9 @@ export class ConstructionsService {
     return 'This action adds a new construction';
   }
 
-  findAll(query: ConstructionQuery) {
+  async findAll(query: ConstructionQuery) {
     const take = query.per_page ?? 10;
-    return this.prisma.construction.findMany({
+    return await this.prisma.construction.findMany({
       skip: query.page ? (query.page - 1) * take : 0,
       take,
       where: {
@@ -44,8 +44,8 @@ export class ConstructionsService {
     });
   }
 
-  findOne(id: number) {
-    return this.prisma.construction.findMany({
+  async findOne(id: number) {
+    return await this.prisma.construction.findMany({
       where: { id },
       include: {
         client: true,
@@ -68,7 +68,9 @@ export class ConstructionsService {
     return `This action updates a #${id} construction`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} construction`;
+  async remove(id: number) {
+    return this.prisma.construction.delete({
+      where: { id },
+    });
   }
 }
