@@ -30,8 +30,8 @@ export class ConstructionsService {
       include: {
         client: true,
         categories: true,
-        employees: true,
-        groups: {
+        Employee: true,
+        Group: {
           include: {
             employees: {
               include: {
@@ -50,8 +50,8 @@ export class ConstructionsService {
       include: {
         client: true,
         categories: true,
-        employees: true,
-        groups: {
+        Employee: true,
+        Group: {
           include: {
             employees: {
               include: {

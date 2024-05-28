@@ -48,11 +48,11 @@ model Employee {
   province      Province        @relation(fields: [province_id], references: [id], onDelete: Cascade)
   state         State           @relation(fields: [state_id], references: [id], onDelete: Cascade)
   groups        EmployeeGroup[]
-  constructinos Construction[]  @relation("construction_employee")
   offers        Offer[]
   orders        Order[]
   profile       ProfileUser?
   media         Image[]         @relation("employeetoimage")
+  constructions Construction[]
 
   @@index([category_id], map: "employees_category_id_fkey")
   @@index([province_id], map: "employees_province_id_fkey")
@@ -252,7 +252,7 @@ model Group {
   id            Int             @id @default(autoincrement())
   name          String
   employees     EmployeeGroup[]
-  constructions Construction[]  @relation("construction_group")
+  constructions Construction[]
 
   @@map("groups")
 }
@@ -276,14 +276,16 @@ model Construction {
   hour         String
   type         ConstructionType
   floors_nbr   Int?
-  chambres_nbr Int?
+  chambers_nbr Int?
   status       OrderStatus      @default(PENDING)
+  employee_id  Int?
+  group_id     Int?
   accepted_at  DateTime?
 
   client     Client     @relation(fields: [client_id], references: [id], onDelete: Cascade)
   categories Category[] @relation("category_construction")
-  employees  Employee[] @relation("construction_employee")
-  groups     Group[]    @relation("construction_group")
+  Employee   Employee?  @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  Group      Group?     @relation(fields: [group_id], references: [id], onDelete: Cascade)
 
   @@map("constructions")
 }
