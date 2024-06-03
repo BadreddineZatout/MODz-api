@@ -81,7 +81,7 @@ export class UsersService {
               media: true,
               state: true,
               province: true,
-              category: true,
+              categories: true,
             },
           })
       : null;
@@ -135,7 +135,7 @@ export class UsersService {
               media: true,
               state: true,
               province: true,
-              category: true,
+              categories: true,
             },
           })
       : null;
@@ -168,7 +168,17 @@ export class UsersService {
     employee_data: CreateEmployeeProfileDto,
   ) {
     const employee = await this.prisma.employee.create({
-      data: { ...employee_data, is_active: false },
+      data: {
+        first_name: employee_data.first_name,
+        last_name: employee_data.last_name,
+        phone: employee_data.phone,
+        national_id: employee_data.national_id,
+        state_id: employee_data.state_id,
+        province_id: employee_data.province_id,
+        is_active: false,
+        categories: { connect: { id: employee_data.category_id } },
+      },
+      include: { categories: true },
     });
 
     await this.prisma.profileUser.create({
@@ -200,7 +210,7 @@ export class UsersService {
               media: true,
               state: true,
               province: true,
-              category: true,
+              categories: true,
             },
           })
       : null;
