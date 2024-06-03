@@ -1,7 +1,6 @@
 import { OrderStatus } from '@prisma/client';
 import { Transform } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, Min } from 'class-validator';
-import { CategoryExists } from '../decorators/category-exists.decorator';
+import { IsArray, IsEnum, IsOptional, IsString, Min } from 'class-validator';
 import { ClientExists } from '../decorators/client-exists.decorator';
 import { JobTypeExists } from '../decorators/job-type-exists.decorator';
 
@@ -23,10 +22,9 @@ export class OrderQuery {
   client_id: number;
 
   @IsOptional()
-  @Transform(({ value }) => parseInt(value))
-  @Min(1)
-  @CategoryExists()
-  category_id: number;
+  @Transform(({ value }) => value.map((item) => parseInt(item)))
+  @IsArray()
+  categories: number[];
 
   @IsOptional()
   @Transform(({ value }) => parseInt(value))
