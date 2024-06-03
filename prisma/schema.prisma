@@ -35,28 +35,27 @@ model Client {
 }
 
 model Employee {
-  id            Int             @id @default(autoincrement())
-  first_name    String
-  last_name     String
-  phone         String
-  state_id      Int
-  province_id   Int
-  category_id   Int
-  is_active     Boolean
-  status        Status          @default(PENDING)
-  national_id   String?
-  category      Category        @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  province      Province        @relation(fields: [province_id], references: [id], onDelete: Cascade)
-  state         State           @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  groups        EmployeeGroup[]
-  offers        Offer[]
-  orders        Order[]
-  profile       ProfileUser?
-  media         Image[]         @relation("employeetoimage")
-  constructions Construction[]
-  problems      Problem[]
+  id                    Int     @id @default(autoincrement())
+  first_name            String
+  last_name             String
+  phone                 String
+  state_id              Int
+  province_id           Int
+  is_active             Boolean
+  status                Status  @default(PENDING)
+  national_id           String?
+  can_work_construction Boolean @default(false)
 
-  @@index([category_id], map: "employees_category_id_fkey")
+  categories         Category[]          @relation("category_employee")
+  province           Province            @relation(fields: [province_id], references: [id], onDelete: Cascade)
+  state              State               @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  offers             Offer[]
+  orders             Order[]
+  profile            ProfileUser?
+  media              Image[]             @relation("employeetoimage")
+  problems           Problem[]
+  constructionOffers ConstructionOffer[]
+
   @@index([province_id], map: "employees_province_id_fkey")
   @@index([state_id], map: "employees_state_id_fkey")
   @@map("employees")
@@ -74,18 +73,19 @@ model ProfileUser {
 }
 
 model Category {
-  id            Int            @id @default(autoincrement())
-  name          String
-  profession    String
-  description   String         @db.Text
-  urgent        Boolean        @default(false)
-  employees     Employee[]
-  items         Item[]
-  Order         Order[]
-  Provider      Provider[]
-  job_types     JobType[]      @relation("category_jobtype")
-  media         Image[]        @relation("categorytoimage")
-  constructions Construction[] @relation("category_construction")
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  profession         String
+  description        String              @db.Text
+  urgent             Boolean             @default(false)
+  employees          Employee[]          @relation("category_employee")
+  items              Item[]
+  Order              Order[]
+  Provider           Provider[]
+  job_types          JobType[]           @relation("category_jobtype")
+  media              Image[]             @relation("categorytoimage")
+  constructions      Construction[]      @relation("category_construction")
+  constructionOffers ConstructionOffer[] @relation("category_construction_offer")
 
   @@map("categories")
 }
@@ -170,27 +170,30 @@ model ProviderSocialmedia {
 }
 
 model JobType {
-  id         Int        @id @default(autoincrement())
-  name       String     @unique
-  has_items  Boolean    @default(false)
-  items      Item[]
-  Order      Order[]
-  categories Category[] @relation("category_jobtype")
+  id                   Int            @id @default(autoincrement())
+  name                 String         @unique
+  has_items            Boolean        @default(false)
+  is_construction_type Boolean        @default(false)
+  items                Item[]
+  orders               Order[]
+  categories           Category[]     @relation("category_jobtype")
+  constructions        Construction[]
 
   @@map("job_types")
 }
 
 model Item {
-  id          Int         @id @default(autoincrement())
-  name        String
-  min_price   Float       @default(0)
-  max_price   Float       @default(0)
-  category_id Int
-  job_type_id Int
-  unit        String      @default("unit")
-  orders      ItemOrder[]
-  category    Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  job_type    JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
+  id            Int                @id @default(autoincrement())
+  name          String
+  min_price     Float              @default(0)
+  max_price     Float              @default(0)
+  category_id   Int
+  job_type_id   Int
+  unit          String             @default("unit")
+  orders        ItemOrder[]
+  constructions ConstructionItem[]
+  category      Category           @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  job_type      JobType            @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
 
   @@index([category_id], map: "items_category_id_fkey")
   @@index([job_type_id], map: "items_job_type_id_fkey")
@@ -251,47 +254,50 @@ model Offer {
   @@map("offers")
 }
 
-model Group {
-  id            Int             @id @default(autoincrement())
-  name          String
-  employees     EmployeeGroup[]
-  constructions Construction[]
-
-  @@map("groups")
-}
-
-model EmployeeGroup {
-  group_id    Int
-  employee_id Int
-  is_leader   Boolean
-  employee    Employee? @relation(fields: [employee_id], references: [id])
-  group       Group?    @relation(fields: [group_id], references: [id])
-
-  @@id([group_id, employee_id])
-  @@map("emplopyee_group")
-}
-
 model Construction {
-  id           Int              @id @default(autoincrement())
-  client_id    Int
-  description  String?          @db.Text
-  date         DateTime
-  hour         String
-  type         ConstructionType
-  floors_nbr   Int?
-  chambers_nbr Int?
-  status       OrderStatus      @default(PENDING)
-  employee_id  Int?
-  group_id     Int?
-  accepted_at  DateTime?
+  id          Int         @id @default(autoincrement())
+  client_id   Int
+  description String?     @db.Text
+  job_type_id Int
+  date        DateTime
+  hour        String
+  status      OrderStatus @default(PENDING)
+  accepted_at DateTime?
 
-  client     Client     @relation(fields: [client_id], references: [id], onDelete: Cascade)
-  categories Category[] @relation("category_construction")
-  employee   Employee?  @relation(fields: [employee_id], references: [id], onDelete: Cascade)
-  group      Group?     @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  client     Client              @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  categories Category[]          @relation("category_construction")
+  job_type   JobType             @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
+  items      ConstructionItem[]
   problems   Problem[]
+  offers     ConstructionOffer[]
 
   @@map("constructions")
+}
+
+model ConstructionItem {
+  item_id         Int
+  construction_id Int
+  quantity        Int          @default(1)
+  item            Item         @relation(fields: [item_id], references: [id], onDelete: Cascade)
+  construction    Construction @relation(fields: [construction_id], references: [id], onDelete: Cascade)
+
+  @@id([item_id, construction_id])
+  @@map("construction_item")
+}
+
+model ConstructionOffer {
+  id              Int          @id @default(autoincrement())
+  employee_id     Int
+  construction_id Int
+  can_travel      Boolean      @default(true)
+  price           Float        @default(0)
+  status          OfferStatus  @default(PENDING)
+  employee        Employee     @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  construction    Construction @relation(fields: [construction_id], references: [id], onDelete: Cascade)
+
+  categories Category[] @relation("category_construction_offer")
+
+  @@map("construction_offers")
 }
 
 model Problem {
@@ -449,11 +455,6 @@ enum OfferStatus {
   PENDING
   ACCEPTED
   REFUSED
-}
-
-enum ConstructionType {
-  NEW
-  RENOVATION
 }
 
 enum Reporter {
