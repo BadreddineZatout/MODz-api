@@ -41,7 +41,9 @@ export class OrdersService {
       take,
       where: {
         client_id: query.client_id,
-        category_id: query.category_id,
+        category_id: {
+          in: query.categories,
+        },
         job_type_id: query.job_type_id,
         status: query.status,
         is_urgent: query.is_urgent,
