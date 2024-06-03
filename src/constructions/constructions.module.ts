@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { ConstructionsController } from './constructions.controller';
 import { ConstructionsService } from './constructions.service';
-import { ConstructionExistsConstraint } from './dto/validators/construction-exists.validator';
+import { ConstructionExistsConstraint } from './validators/construction-exists.validator';
 
 @Module({
   controllers: [ConstructionsController],

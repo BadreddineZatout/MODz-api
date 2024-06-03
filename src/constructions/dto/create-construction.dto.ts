@@ -34,5 +34,13 @@ export class CreateConstructionDto {
 
   @Transform(({ value }) => parseInt(value))
   @Min(1)
-  type: number;
+  job_type_id: number;
+
+  @IsArray()
+  items: ConstructionItem[];
 }
+
+type ConstructionItem = {
+  item_id: number;
+  quantity: number;
+};
