@@ -178,7 +178,7 @@ export class UsersService {
         is_active: false,
         categories: { connect: { id: employee_data.category_id } },
       },
-      include: { categories: true },
+      include: { state: true, province: true, categories: true },
     });
 
     await this.prisma.profileUser.create({
@@ -272,10 +272,25 @@ export class UsersService {
         data: data as UpdateClientProfileDto,
       });
     }
-
+    const employee_data = data as UpdateEmployeeProfileDto;
     return await this.prisma.employee.update({
       where: { id: user.profile.employee_id },
-      data: data as UpdateEmployeeProfileDto,
+      data: {
+        first_name: employee_data.first_name,
+        last_name: employee_data.last_name,
+        phone: employee_data.phone,
+        national_id: employee_data.national_id,
+        state_id: employee_data.state_id,
+        province_id: employee_data.province_id,
+        categories: employee_data.category_id && {
+          set: [{ id: employee_data.category_id }],
+        },
+      },
+      include: {
+        state: true,
+        province: true,
+        categories: true,
+      },
     });
   }
 
