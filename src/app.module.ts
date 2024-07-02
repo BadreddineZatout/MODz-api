@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { CategoriesModule } from './categories/categories.module';
+import { ConstructionOffersModule } from './construction-offers/construction-offers.module';
 import { ConstructionsModule } from './constructions/constructions.module';
 import { OffersModule } from './offers/offers.module';
 import { OrdersModule } from './orders/orders.module';
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module';
     OffersModule,
     ConstructionsModule,
     ProblemsModule,
+    ConstructionOffersModule,
   ],
   controllers: [],
   providers: [PrismaService],
