@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `subscriptions` MODIFY `status` ENUM('PENDING', 'ACTIVE', 'EXPIRED', 'CANCELLED') NOT NULL DEFAULT 'PENDING';

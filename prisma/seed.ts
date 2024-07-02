@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 async function main() {
-  const social_media = await prisma.socialMedia.createMany({
+  await prisma.socialMedia.createMany({
     data: [
       { name: 'Facebook' },
       { name: 'Instagram' },
@@ -12,7 +12,10 @@ async function main() {
       { name: 'SnapChat' },
     ],
   });
-  console.log(social_media);
+
+  await prisma.pack.create({
+    data: { name: 'Free' },
+  });
 }
 main()
   .then(async () => {

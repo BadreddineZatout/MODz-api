@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id             Int          @id @default(autoincrement())
-  email          String       @unique
+  id             Int            @id @default(autoincrement())
+  email          String         @unique
   password       String
   current_role   Role?
   name           String?
   remember_token String?
   verified_at    DateTime?
   profile        ProfileUser?
+  subscriptions  Subscription[]
 
   @@map("users")
 }
@@ -319,6 +320,30 @@ model Problem {
   @@map("problems")
 }
 
+model Pack {
+  id            Int            @id @default(autoincrement())
+  name          String         @unique
+  price         Float?         @default(0.0)
+  duration      Int            @default(1) //duration per month
+  order_limit   Int?
+  subscriptions Subscription[]
+
+  @@map("packs")
+}
+
+model Subscription {
+  id        Int                @id @default(autoincrement())
+  user_id   Int
+  pack_id   Int
+  starts_at DateTime?
+  ends_at   DateTime?
+  status    SubscriptionStatus @default(PENDING)
+  user      User?              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  pack      Pack?              @relation(fields: [pack_id], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model media {
   id                    BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
@@ -460,4 +485,11 @@ enum OfferStatus {
 enum Reporter {
   CLIENT
   EMPLOYEE
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+  CANCELLED
 }

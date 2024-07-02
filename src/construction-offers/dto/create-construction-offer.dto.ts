@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsArray, IsOptional, Min } from 'class-validator';
+import { ConstructionExists } from 'src/constructions/decorators/construction-exists.decorator';
 import { EmployeeExists } from 'src/offers/decorators/employee-exists.decorator';
 
 export class CreateConstructionOfferDto {
@@ -10,6 +11,7 @@ export class CreateConstructionOfferDto {
 
   @Transform(({ value }) => parseInt(value))
   @Min(1)
+  @ConstructionExists()
   construction_id: number;
 
   @Transform(({ value }) =>

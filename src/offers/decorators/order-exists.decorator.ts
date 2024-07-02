@@ -4,7 +4,7 @@ import { OrderExistsConstraint } from '../validators/order-exists.validator';
 export function OrderExists(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {
     registerDecorator({
-      name: 'clientExists',
+      name: 'orderExists',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,

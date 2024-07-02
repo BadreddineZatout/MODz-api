@@ -49,6 +49,9 @@ export class UsersService {
       where: { email: data.email },
       include: {
         profile: true,
+        subscriptions: {
+          include: { pack: true },
+        },
       },
     });
     if (!user) {
@@ -93,6 +96,9 @@ export class UsersService {
         current_role: user.current_role,
         verified_at: user.verified_at,
         profile: profile,
+        subscription: user.subscriptions?.find(
+          (subscription) => subscription.status === 'ACTIVE',
+        ),
       },
       token: await this.jwtService.signAsync({
         sub: user.id,
@@ -113,6 +119,9 @@ export class UsersService {
         verified_at: true,
         current_role: true,
         profile: true,
+        subscriptions: {
+          include: { pack: true },
+        },
       },
     });
     if (!user) {
@@ -142,6 +151,10 @@ export class UsersService {
 
     return {
       ...user,
+      subscriptions: undefined,
+      subscription: user.subscriptions?.find(
+        (subscription) => subscription.status === 'ACTIVE',
+      ),
       profile: profile,
       email_confirmation: user.verified_at
         ? null
