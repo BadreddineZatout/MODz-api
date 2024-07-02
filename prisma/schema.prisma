@@ -490,5 +490,6 @@ enum Reporter {
 enum SubscriptionStatus {
   PENDING
   ACTIVE
+  EXPIRED
   CANCELLED
 }

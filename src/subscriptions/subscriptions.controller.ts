@@ -5,14 +5,12 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { TokenGuard } from 'src/orders/guards/token.guard';
 import { User } from 'src/users/decorators/user.decorator';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 import { SubscriptionsService } from './subscriptions.service';
 
 @Controller('subscriptions')
@@ -38,16 +36,13 @@ export class SubscriptionsController {
     return this.subscriptionsService.findOne(id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateSubscriptionDto: UpdateSubscriptionDto,
-  ) {
-    return this.subscriptionsService.update(id, updateSubscriptionDto);
+  @Post('cancel/:id')
+  cancel(@Param('id', ParseIntPipe) id: number, @User() user: number) {
+    return this.subscriptionsService.cancel(id, user);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.subscriptionsService.remove(id);
+  remove(@Param('id', ParseIntPipe) id: number, @User() user: number) {
+    return this.subscriptionsService.remove(id, user);
   }
 }
