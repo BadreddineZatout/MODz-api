@@ -74,6 +74,30 @@ export class SubscriptionsService {
   }
 
   async remove(id: number, user: number) {
-    return `This action removes a #${id} subscription`;
+    const subscription = await this.prisma.subscription.findFirst({
+      where: {
+        id,
+        user_id: user,
+      },
+    });
+    if (!subscription || !user)
+      throw new HttpException(
+        {
+          message: "You can't delete a subscription you don't own",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    if (subscription.status != 'PENDING')
+      throw new HttpException(
+        {
+          message: 'You can only delete pending subscriptions',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    await this.prisma.subscription.delete({
+      where: { id: id },
+    });
+    return { message: 'Subscription deleted' };
   }
 }
