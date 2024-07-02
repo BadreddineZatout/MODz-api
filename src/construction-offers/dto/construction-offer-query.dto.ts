@@ -1,6 +1,7 @@
 import { OfferStatus } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, Min } from 'class-validator';
+import { ConstructionExists } from 'src/constructions/decorators/construction-exists.decorator';
 import { EmployeeExists } from 'src/offers/decorators/employee-exists.decorator';
 
 export class ConstructionOfferQuery {
@@ -23,6 +24,7 @@ export class ConstructionOfferQuery {
   @IsOptional()
   @Transform(({ value }) => parseInt(value))
   @Min(1)
+  @ConstructionExists()
   construction_id: number;
 
   @IsOptional()

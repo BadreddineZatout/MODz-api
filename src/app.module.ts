@@ -9,6 +9,7 @@ import { PrismaService } from './prisma.service';
 import { ProblemsModule } from './problems/problems.module';
 import { ProvidersModule } from './providers/providers.module';
 import { StatesModule } from './states/states.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -26,6 +27,7 @@ import { UsersModule } from './users/users.module';
     ConstructionsModule,
     ProblemsModule,
     ConstructionOffersModule,
+    SubscriptionsModule,
   ],
   controllers: [],
   providers: [PrismaService],
