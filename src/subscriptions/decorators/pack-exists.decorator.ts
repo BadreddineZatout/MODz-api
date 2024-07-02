@@ -1,15 +1,15 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { ConstructionExistsConstraint } from '../validators/construction-exists.validator';
+import { PackExistsConstraint } from '../validators/pack-exists.validator';
 
-export function ConstructionExists(validationOptions?: ValidationOptions) {
+export function PackExists(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {
     registerDecorator({
-      name: 'constructionExists',
+      name: 'packExists',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
       constraints: [],
-      validator: ConstructionExistsConstraint,
+      validator: PackExistsConstraint,
     });
   };
 }

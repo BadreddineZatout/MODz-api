@@ -6,8 +6,16 @@ import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 @Injectable()
 export class SubscriptionsService {
   constructor(private prisma: PrismaService) {}
-  async create(createSubscriptionDto: CreateSubscriptionDto) {
-    return 'This action adds a new subscription';
+  async create(createSubscriptionDto: CreateSubscriptionDto, user: number) {
+    return await this.prisma.subscription.create({
+      data: {
+        user_id: user,
+        pack_id: createSubscriptionDto.pack_id,
+      },
+      include: {
+        pack: true,
+      },
+    });
   }
 
   async findAll(user: number) {

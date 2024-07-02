@@ -4,7 +4,7 @@ import { EmployeeExistsConstraint } from '../validators/employee-exists.validato
 export function EmployeeExists(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {
     registerDecorator({
-      name: 'clientExists',
+      name: 'employeeExists',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,

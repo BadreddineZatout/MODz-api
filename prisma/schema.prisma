@@ -325,21 +325,21 @@ model Pack {
   name          String         @unique
   price         Float?         @default(0.0)
   duration      Int            @default(1) //duration per month
+  order_limit   Int?
   subscriptions Subscription[]
 
   @@map("packs")
 }
 
 model Subscription {
-  id          Int                @id @default(autoincrement())
-  user_id     Int
-  pack_id     Int
-  starts_at   DateTime?
-  ends_at     DateTime?
-  status      SubscriptionStatus @default(PENDING)
-  order_limit Int                @default(0)
-  user        User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  pack        Pack               @relation(fields: [pack_id], references: [id], onDelete: Cascade)
+  id        Int                @id @default(autoincrement())
+  user_id   Int
+  pack_id   Int
+  starts_at DateTime?
+  ends_at   DateTime?
+  status    SubscriptionStatus @default(PENDING)
+  user      User?              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  pack      Pack?              @relation(fields: [pack_id], references: [id], onDelete: Cascade)
 
   @@map("subscriptions")
 }

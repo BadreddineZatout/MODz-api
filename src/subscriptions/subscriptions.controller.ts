@@ -21,8 +21,11 @@ export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
   @Post()
-  create(@Body() createSubscriptionDto: CreateSubscriptionDto) {
-    return this.subscriptionsService.create(createSubscriptionDto);
+  create(
+    @Body() createSubscriptionDto: CreateSubscriptionDto,
+    @User() user: number,
+  ) {
+    return this.subscriptionsService.create(createSubscriptionDto, user);
   }
 
   @Get()
