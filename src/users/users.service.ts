@@ -360,12 +360,7 @@ export class UsersService {
         },
       });
     } catch (error) {
-      throw new HttpException(
-        {
-          message: [error],
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      console.log(error);
     }
     return {
       code,
@@ -409,12 +404,7 @@ export class UsersService {
         },
       });
     } catch (error) {
-      throw new HttpException(
-        {
-          message: [error],
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      console.log(error);
     }
     return {
       code,
