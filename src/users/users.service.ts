@@ -350,14 +350,23 @@ export class UsersService {
       email: email,
       type: 'Email Confirmation',
     });
-    await this.mailerService.sendMail({
-      to: email,
-      subject: 'Confirm Your Email',
-      template: 'confirmation', // Name of your email template file without extension
-      context: {
-        code,
-      },
-    });
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Confirm Your Email',
+        template: 'confirmation', // Name of your email template file without extension
+        context: {
+          code,
+        },
+      });
+    } catch (error) {
+      throw new HttpException(
+        {
+          message: [error],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return {
       code,
       token,
@@ -390,14 +399,23 @@ export class UsersService {
     const token = await this.jwtService.signAsync({
       sub: email,
     });
-    await this.mailerService.sendMail({
-      to: email,
-      subject: 'Reset Your Password',
-      template: 'password-reset', // Name of your email template file without extension
-      context: {
-        code,
-      },
-    });
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Reset Your Password',
+        template: 'password-reset', // Name of your email template file without extension
+        context: {
+          code,
+        },
+      });
+    } catch (error) {
+      throw new HttpException(
+        {
+          message: [error],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return {
       code,
       token,
