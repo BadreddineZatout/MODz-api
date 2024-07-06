@@ -26,6 +26,11 @@ export class SubscriptionsController {
     return this.subscriptionsService.create(createSubscriptionDto, user);
   }
 
+  @Get('/packs')
+  getPacks() {
+    return this.subscriptionsService.getPacks();
+  }
+
   @Get()
   findAll(@User() user: number) {
     return this.subscriptionsService.findAll(user);

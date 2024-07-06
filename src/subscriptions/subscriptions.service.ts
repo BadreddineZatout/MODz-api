@@ -19,6 +19,10 @@ export class SubscriptionsService {
     });
   }
 
+  async getPacks() {
+    return await this.prisma.pack.findMany();
+  }
+
   async findAll(user: number) {
     return await this.prisma.subscription.findMany({
       where: { user_id: user },
