@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { TokenGuard } from 'src/orders/guards/token.guard';
@@ -27,8 +28,8 @@ export class SubscriptionsController {
   }
 
   @Get('/packs')
-  getPacks() {
-    return this.subscriptionsService.getPacks();
+  getPacks(@Query('duration') duration: number) {
+    return this.subscriptionsService.getPacks(duration);
   }
 
   @Get()
