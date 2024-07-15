@@ -15,7 +15,6 @@ export class ConstructionsService {
         description: createConstructionDto.description,
         date: new Date(createConstructionDto.date),
         hour: createConstructionDto.hour,
-        job_type_id: createConstructionDto.job_type_id,
         categories: {
           connect: createConstructionDto.categories,
         },
@@ -26,7 +25,6 @@ export class ConstructionsService {
       include: {
         client: true,
         categories: true,
-        job_type: true,
         items: {
           include: {
             item: true,
@@ -43,7 +41,6 @@ export class ConstructionsService {
       take,
       where: {
         client_id: query.client_id,
-        job_type_id: query.job_type_id,
         status: query.status,
         categories: query.category_id && {
           some: {
@@ -54,7 +51,6 @@ export class ConstructionsService {
       include: {
         client: true,
         categories: true,
-        job_type: true,
         items: {
           include: {
             item: true,
@@ -71,7 +67,6 @@ export class ConstructionsService {
       include: {
         client: true,
         categories: true,
-        job_type: true,
         items: {
           include: {
             item: true,
@@ -119,7 +114,6 @@ export class ConstructionsService {
           ? new Date(updateConstructionDto.date)
           : updateConstructionDto.date,
         hour: updateConstructionDto.hour,
-        job_type_id: updateConstructionDto.job_type_id,
         status: updateConstructionDto.status,
         accepted_at: updateConstructionDto.accepted_at
           ? new Date(updateConstructionDto.accepted_at)
@@ -131,7 +125,6 @@ export class ConstructionsService {
       include: {
         client: true,
         categories: true,
-        job_type: true,
         items: {
           include: {
             item: true,

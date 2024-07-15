@@ -42,7 +42,6 @@ export class ConstructionOffersService {
         construction: {
           include: {
             categories: true,
-            job_type: true,
             client: true,
             items: {
               include: {
@@ -85,7 +84,6 @@ export class ConstructionOffersService {
         construction: {
           include: {
             categories: true,
-            job_type: true,
             client: true,
             items: {
               include: {

@@ -28,11 +28,6 @@ export class ConstructionQuery {
   category_id: number;
 
   @IsOptional()
-  @Transform(({ value }) => parseInt(value))
-  @Min(1)
-  job_type_id: number;
-
-  @IsOptional()
   @IsString()
   @IsEnum(OrderStatus)
   status: OrderStatus;

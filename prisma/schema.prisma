@@ -178,7 +178,6 @@ model JobType {
   items                Item[]
   orders               Order[]
   categories           Category[]     @relation("category_jobtype")
-  constructions        Construction[]
 
   @@map("job_types")
 }
@@ -259,7 +258,6 @@ model Construction {
   id          Int         @id @default(autoincrement())
   client_id   Int
   description String?     @db.Text
-  job_type_id Int
   date        DateTime
   hour        String
   status      OrderStatus @default(PENDING)
@@ -267,7 +265,6 @@ model Construction {
 
   client     Client              @relation(fields: [client_id], references: [id], onDelete: Cascade)
   categories Category[]          @relation("category_construction")
-  job_type   JobType             @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
   items      ConstructionItem[]
   problems   Problem[]
   offers     ConstructionOffer[]
