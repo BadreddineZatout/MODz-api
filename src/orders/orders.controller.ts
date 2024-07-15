@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { Owner } from 'src/users/decorators/owner.decorator';
 import { OrderExists } from './decorators/order-exists.decorator';
+import { CancelOrderDto } from './dto/cancel-order.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderQuery } from './dto/order-query.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -53,6 +54,15 @@ export class OrdersController {
     @Owner() owner: number,
   ) {
     return this.ordersService.update(id, updateOrderDto, owner);
+  }
+
+  @Post('/cancel/:id')
+  cancel(
+    @OrderExists() id: number,
+    @Body() cancelOrderDto: CancelOrderDto,
+    @Owner() owner: number,
+  ) {
+    return this.ordersService.cancel(id, cancelOrderDto, owner);
   }
 
   @Delete(':id')

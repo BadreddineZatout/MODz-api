@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { CancelOrderDto } from './dto/cancel-order.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderQuery } from './dto/order-query.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -175,6 +176,40 @@ export class OrdersService {
   async getCancelReasons(for_employee: number) {
     return await this.prisma.cancelReason.findMany({
       where: { cancelBy: for_employee ? 'EMPLOYEE' : 'CLIENT' },
+    });
+  }
+
+  async cancel(id: number, cancelOrderDto: CancelOrderDto, owner: number) {
+    const order = await this.prisma.order.findFirst({
+      where: { id },
+    });
+    if (cancelOrderDto.cancel_by === 'CLIENT' && order.client_id !== owner) {
+      throw new HttpException(
+        {
+          message: "You can't cancel an order you don't own",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (
+      cancelOrderDto.cancel_by === 'EMPLOYEE' &&
+      order.employee_id !== owner
+    ) {
+      if (order.employee_id !== owner) {
+        throw new HttpException(
+          {
+            message: "You can't cancel an order you don't work on",
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+    return await this.prisma.order.update({
+      where: { id },
+      data: {
+        status: 'CANCELLED',
+        cancel_reason: cancelOrderDto.reason,
+      },
     });
   }
 }
