@@ -202,24 +202,26 @@ model Item {
 }
 
 model Order {
-  id          Int         @id @default(autoincrement())
-  client_id   Int
-  description String?     @db.Text
-  date        DateTime
-  hour        String
-  category_id Int
-  job_type_id Int
-  status      OrderStatus @default(PENDING)
-  is_urgent   Boolean     @default(false)
-  accepted_at DateTime?
-  employee_id Int?
-  items       ItemOrder[]
-  Offer       Offer[]
-  category    Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  client      Client      @relation(fields: [client_id], references: [id], onDelete: Cascade)
-  employee    Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)
-  job_type    JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
-  problems    Problem[]
+  id            Int         @id @default(autoincrement())
+  client_id     Int
+  description   String?     @db.Text
+  date          DateTime
+  hour          String
+  category_id   Int
+  job_type_id   Int
+  status        OrderStatus @default(PENDING)
+  is_urgent     Boolean     @default(false)
+  accepted_at   DateTime?
+  employee_id   Int?
+  cancel_reason String?     @db.Text
+
+  items    ItemOrder[]
+  Offer    Offer[]
+  category Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  client   Client      @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  employee Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  job_type JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
+  problems Problem[]
 
   @@index([category_id], map: "orders_category_id_fkey")
   @@index([client_id], map: "orders_client_id_fkey")
@@ -342,6 +344,14 @@ model Subscription {
   pack      Pack?              @relation(fields: [pack_id], references: [id], onDelete: Cascade)
 
   @@map("subscriptions")
+}
+
+model CancelReason {
+  id       Int      @id @default(autoincrement())
+  reason   String
+  cancelBy Reporter
+
+  @@map("cancel_reasons")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.

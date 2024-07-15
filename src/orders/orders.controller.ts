@@ -31,6 +31,16 @@ export class OrdersController {
     return this.ordersService.findAll(query);
   }
 
+  @Get('/cancel-reasons/employee')
+  getCancelReasonsForEmployee() {
+    return this.ordersService.getCancelReasons(1);
+  }
+
+  @Get('/cancel-reasons/client')
+  getCancelReasonsForClient() {
+    return this.ordersService.getCancelReasons(0);
+  }
+
   @Get(':id')
   findOne(@OrderExists() id: number) {
     return this.ordersService.getOrder(id);

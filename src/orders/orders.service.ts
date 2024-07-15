@@ -171,4 +171,10 @@ export class OrdersService {
     });
     return { message: 'Order deleted' };
   }
+
+  async getCancelReasons(for_employee: number) {
+    return await this.prisma.cancelReason.findMany({
+      where: { cancelBy: for_employee ? 'EMPLOYEE' : 'CLIENT' },
+    });
+  }
 }
