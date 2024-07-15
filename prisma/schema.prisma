@@ -36,16 +36,17 @@ model Client {
 }
 
 model Employee {
-  id                    Int     @id @default(autoincrement())
+  id                    Int      @id @default(autoincrement())
   first_name            String
   last_name             String
   phone                 String
   state_id              Int
   province_id           Int
   is_active             Boolean
-  status                Status  @default(PENDING)
+  status                Status   @default(PENDING)
   national_id           String?
-  can_work_construction Boolean @default(false)
+  type                  WorkType @default(INDIVIDUAL)
+  can_work_construction Boolean  @default(false)
 
   categories         Category[]          @relation("category_employee")
   province           Province            @relation(fields: [province_id], references: [id], onDelete: Cascade)
@@ -171,13 +172,13 @@ model ProviderSocialmedia {
 }
 
 model JobType {
-  id                   Int            @id @default(autoincrement())
-  name                 String         @unique
-  has_items            Boolean        @default(false)
-  is_construction_type Boolean        @default(false)
+  id                   Int        @id @default(autoincrement())
+  name                 String     @unique
+  has_items            Boolean    @default(false)
+  is_construction_type Boolean    @default(false)
   items                Item[]
   orders               Order[]
-  categories           Category[]     @relation("category_jobtype")
+  categories           Category[] @relation("category_jobtype")
 
   @@map("job_types")
 }
@@ -260,6 +261,8 @@ model Construction {
   description String?     @db.Text
   date        DateTime
   hour        String
+  type        WorkType?
+  periority   Int         @default(1)
   status      OrderStatus @default(PENDING)
   accepted_at DateTime?
 
@@ -469,6 +472,7 @@ enum Status {
 enum OrderStatus {
   PENDING
   PROCESSING
+  WAITING
   DONE
   CANCELLED
 }
@@ -489,4 +493,9 @@ enum SubscriptionStatus {
   ACTIVE
   EXPIRED
   CANCELLED
+}
+
+enum WorkType {
+  INDIVIDUAL
+  GROUP
 }
