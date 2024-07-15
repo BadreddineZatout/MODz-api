@@ -20,7 +20,15 @@ export class SubscriptionsService {
   }
 
   async getPacks() {
-    return await this.prisma.pack.findMany();
+    return {
+      durations: {
+        '1 Month': 1,
+        '3 Months': 3,
+        '6 Months': 6,
+        '1 Year': 12,
+      },
+      packs: await this.prisma.pack.findMany(),
+    };
   }
 
   async findAll(user: number) {
