@@ -36,6 +36,11 @@ export class SubscriptionsController {
     return this.subscriptionsService.findAll(user);
   }
 
+  @Get('/current')
+  getCurrent(@User() user: number) {
+    return this.subscriptionsService.getCurrent(user);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.subscriptionsService.findOne(id);

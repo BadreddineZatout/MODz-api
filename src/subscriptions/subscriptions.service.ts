@@ -32,6 +32,15 @@ export class SubscriptionsService {
     });
   }
 
+  async getCurrent(user: number) {
+    return await this.prisma.subscription.findFirst({
+      where: { user_id: user, status: 'ACTIVE' },
+      include: {
+        pack: true,
+      },
+    });
+  }
+
   async findOne(id: number) {
     return await this.prisma.subscription.findFirst({
       where: { id: id },
