@@ -8,6 +8,33 @@ export class OffersService {
   constructor(private prisma: PrismaService) {}
 
   async create(createOfferDto: CreateOfferDto) {
+    const order = await this.prisma.order.findFirst({
+      where: {
+        id: createOfferDto.order_id,
+      },
+    });
+    if (order.status !== 'PENDING')
+      throw new HttpException(
+        {
+          message: 'You can create an offer only for pending orders',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const acceptedOffer = await this.prisma.offer.findFirst({
+      where: {
+        order_id: createOfferDto.order_id,
+        status: 'ACCEPTED',
+      },
+    });
+    if (acceptedOffer)
+      throw new HttpException(
+        {
+          message: 'There is already an accepted offer for this order',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
     return await this.prisma.offer.create({
       data: createOfferDto,
       include: {
@@ -126,6 +153,100 @@ export class OffersService {
     return await this.prisma.offer.update({
       where: { id },
       data: updateOfferDto,
+      include: {
+        order: true,
+      },
+    });
+  }
+
+  async accept(id: number, owner: number) {
+    const offer = await this.prisma.offer.findFirst({
+      where: {
+        id,
+      },
+    });
+    const order = await this.prisma.order.findFirst({
+      where: {
+        id: offer.order_id,
+        client_id: owner,
+      },
+    });
+    if (!order || !owner)
+      throw new HttpException(
+        {
+          message: "You can't accept an offer for an order you don't own",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const acceptedOffer = await this.prisma.offer.findFirst({
+      where: {
+        order_id: order.id,
+        status: 'ACCEPTED',
+      },
+    });
+    if (acceptedOffer)
+      throw new HttpException(
+        {
+          message: 'There is already an accepted offer for this order',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    await this.prisma.order.update({
+      where: {
+        id: order.id,
+      },
+      data: {
+        employee_id: offer.employee_id,
+      },
+    });
+
+    return await this.prisma.offer.update({
+      where: { id },
+      data: {
+        status: 'ACCEPTED',
+      },
+      include: {
+        order: true,
+      },
+    });
+  }
+
+  async refuse(id: number, owner: number) {
+    const offer = await this.prisma.offer.findFirst({
+      where: {
+        id,
+      },
+    });
+    const order = await this.prisma.order.findFirst({
+      where: {
+        id: offer.order_id,
+        client_id: owner,
+      },
+    });
+    if (!order || !owner)
+      throw new HttpException(
+        {
+          message: "You can't refuse an offer for an order you don't own",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    if (offer.status === 'ACCEPTED')
+      await this.prisma.order.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          employee_id: null,
+        },
+      });
+
+    return await this.prisma.offer.update({
+      where: { id },
+      data: {
+        status: 'REFUSED',
+      },
       include: {
         order: true,
       },

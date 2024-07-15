@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Patch,
   Post,
   Put,
   Query,
@@ -43,6 +44,16 @@ export class OffersController {
     @Owner() owner: number,
   ) {
     return this.offersService.update(id, updateOfferDto, owner);
+  }
+
+  @Patch('/accept/:id')
+  accept(@OfferExists() id: number, @Owner() owner: number) {
+    return this.offersService.accept(id, owner);
+  }
+
+  @Patch('/refuse/:id')
+  refuse(@OfferExists() id: number, @Owner() owner: number) {
+    return this.offersService.refuse(id, owner);
   }
 
   @Delete(':id')
