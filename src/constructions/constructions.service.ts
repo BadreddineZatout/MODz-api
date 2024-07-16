@@ -51,12 +51,12 @@ export class ConstructionsService {
       include: {
         client: true,
         categories: true,
+        employees: true,
         items: {
           include: {
             item: true,
           },
         },
-        offers: true,
       },
     });
   }
@@ -67,12 +67,12 @@ export class ConstructionsService {
       include: {
         client: true,
         categories: true,
+        employees: true,
         items: {
           include: {
             item: true,
           },
         },
-        offers: true,
       },
     });
   }
@@ -125,6 +125,7 @@ export class ConstructionsService {
       include: {
         client: true,
         categories: true,
+        employees: true,
         items: {
           include: {
             item: true,

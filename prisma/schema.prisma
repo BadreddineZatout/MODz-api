@@ -22,15 +22,15 @@ model User {
 }
 
 model Client {
-  id           Int            @id @default(autoincrement())
-  first_name   String
-  last_name    String
-  phone        String
-  status       Status         @default(PENDING)
-  Order        Order[]
-  profile      ProfileUser?
-  Construction Construction[]
-  problems     Problem[]
+  id            Int            @id @default(autoincrement())
+  first_name    String
+  last_name     String
+  phone         String
+  status        Status         @default(PENDING)
+  Order         Order[]
+  profile       ProfileUser?
+  constructions Construction[]
+  problems      Problem[]
 
   @@map("clients")
 }
@@ -48,15 +48,15 @@ model Employee {
   type                  WorkType @default(INDIVIDUAL)
   can_work_construction Boolean  @default(false)
 
-  categories         Category[]          @relation("category_employee")
-  province           Province            @relation(fields: [province_id], references: [id], onDelete: Cascade)
-  state              State               @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  offers             Offer[]
-  orders             Order[]
-  profile            ProfileUser?
-  media              Image[]             @relation("employeetoimage")
-  problems           Problem[]
-  constructionOffers ConstructionOffer[]
+  categories    Category[]     @relation("category_employee")
+  province      Province       @relation(fields: [province_id], references: [id], onDelete: Cascade)
+  state         State          @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  offers        Offer[]
+  orders        Order[]
+  profile       ProfileUser?
+  media         Image[]        @relation("employeetoimage")
+  problems      Problem[]
+  constructions Construction[] @relation("construction_employee")
 
   @@index([province_id], map: "employees_province_id_fkey")
   @@index([state_id], map: "employees_state_id_fkey")
@@ -75,19 +75,18 @@ model ProfileUser {
 }
 
 model Category {
-  id                 Int                 @id @default(autoincrement())
-  name               String
-  profession         String
-  description        String              @db.Text
-  urgent             Boolean             @default(false)
-  employees          Employee[]          @relation("category_employee")
-  items              Item[]
-  Order              Order[]
-  Provider           Provider[]
-  job_types          JobType[]           @relation("category_jobtype")
-  media              Image[]             @relation("categorytoimage")
-  constructions      Construction[]      @relation("category_construction")
-  constructionOffers ConstructionOffer[] @relation("category_construction_offer")
+  id            Int            @id @default(autoincrement())
+  name          String
+  profession    String
+  description   String         @db.Text
+  urgent        Boolean        @default(false)
+  employees     Employee[]     @relation("category_employee")
+  items         Item[]
+  Order         Order[]
+  Provider      Provider[]
+  job_types     JobType[]      @relation("category_jobtype")
+  media         Image[]        @relation("categorytoimage")
+  constructions Construction[] @relation("category_construction")
 
   @@map("categories")
 }
@@ -268,11 +267,11 @@ model Construction {
   status      OrderStatus @default(PENDING)
   accepted_at DateTime?
 
-  client     Client              @relation(fields: [client_id], references: [id], onDelete: Cascade)
-  categories Category[]          @relation("category_construction")
+  client     Client             @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  categories Category[]         @relation("category_construction")
   items      ConstructionItem[]
   problems   Problem[]
-  offers     ConstructionOffer[]
+  employees  Employee[]         @relation("construction_employee")
 
   @@map("constructions")
 }
@@ -286,21 +285,6 @@ model ConstructionItem {
 
   @@id([item_id, construction_id])
   @@map("construction_item")
-}
-
-model ConstructionOffer {
-  id              Int          @id @default(autoincrement())
-  employee_id     Int
-  construction_id Int
-  can_travel      Boolean      @default(true)
-  price           Float        @default(0)
-  status          OfferStatus  @default(PENDING)
-  employee        Employee     @relation(fields: [employee_id], references: [id], onDelete: Cascade)
-  construction    Construction @relation(fields: [construction_id], references: [id], onDelete: Cascade)
-
-  categories Category[] @relation("category_construction_offer")
-
-  @@map("construction_offers")
 }
 
 model Problem {
