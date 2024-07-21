@@ -14,6 +14,7 @@ export class CategoriesService {
       take,
       where: {
         urgent: query.urgent,
+        for_construction: query.for_construction ?? false,
       },
       include: {
         job_types: {
@@ -21,6 +22,7 @@ export class CategoriesService {
             items: true,
           },
         },
+        items: query.for_construction ?? false,
       },
     });
 

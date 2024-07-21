@@ -15,4 +15,8 @@ export class CategoryQueryDto {
   @IsOptional()
   @Transform(({ value }) => value == 'true')
   urgent: boolean;
+
+  @IsOptional()
+  @Transform(({ value }) => value == 'true')
+  for_construction: boolean;
 }

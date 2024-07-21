@@ -75,18 +75,19 @@ model ProfileUser {
 }
 
 model Category {
-  id            Int            @id @default(autoincrement())
-  name          String
-  profession    String
-  description   String         @db.Text
-  urgent        Boolean        @default(false)
-  employees     Employee[]     @relation("category_employee")
-  items         Item[]
-  Order         Order[]
-  Provider      Provider[]
-  job_types     JobType[]      @relation("category_jobtype")
-  media         Image[]        @relation("categorytoimage")
-  constructions Construction[] @relation("category_construction")
+  id               Int            @id @default(autoincrement())
+  name             String
+  profession       String
+  description      String         @db.Text
+  urgent           Boolean        @default(false)
+  for_construction Boolean        @default(false)
+  employees        Employee[]     @relation("category_employee")
+  items            Item[]
+  Order            Order[]
+  Provider         Provider[]
+  job_types        JobType[]      @relation("category_jobtype")
+  media            Image[]        @relation("categorytoimage")
+  constructions    Construction[] @relation("category_construction")
 
   @@map("categories")
 }
@@ -188,12 +189,12 @@ model Item {
   min_price     Float              @default(0)
   max_price     Float              @default(0)
   category_id   Int
-  job_type_id   Int
+  job_type_id   Int?
   unit          String             @default("unit")
   orders        ItemOrder[]
   constructions ConstructionItem[]
   category      Category           @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  job_type      JobType            @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
+  job_type      JobType?           @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
 
   @@index([category_id], map: "items_category_id_fkey")
   @@index([job_type_id], map: "items_job_type_id_fkey")
