@@ -173,6 +173,48 @@ export class ConstructionsService {
       data: {
         status: 'PROCESSING',
       },
+      include: {
+        client: true,
+        categories: true,
+        employees: true,
+        items: {
+          include: {
+            item: true,
+          },
+        },
+      },
+    });
+  }
+
+  async finish(id: number, owner: number) {
+    const construction = await this.prisma.construction.findFirst({
+      where: {
+        id,
+        client_id: owner,
+      },
+    });
+    if (!construction || !owner)
+      throw new HttpException(
+        {
+          message: "You can't finish a construction job you don't own",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    return await this.prisma.construction.update({
+      where: { id },
+      data: {
+        status: 'DONE',
+      },
+      include: {
+        client: true,
+        categories: true,
+        employees: true,
+        items: {
+          include: {
+            item: true,
+          },
+        },
+      },
     });
   }
 }

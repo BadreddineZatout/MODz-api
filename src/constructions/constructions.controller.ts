@@ -56,4 +56,9 @@ export class ConstructionsController {
   start(@Param('id', ParseIntPipe) id: number, @Owner() owner: number) {
     return this.constructionsService.start(id, owner);
   }
+
+  @Post('/start/:id')
+  finish(@Param('id', ParseIntPipe) id: number, @Owner() owner: number) {
+    return this.constructionsService.finish(id, owner);
+  }
 }

@@ -219,6 +219,15 @@ export class OrdersService {
       data: {
         status: 'PROCESSING',
       },
+      include: {
+        category: true,
+        job_type: true,
+        items: {
+          include: {
+            item: true,
+          },
+        },
+      },
     });
   }
 }
