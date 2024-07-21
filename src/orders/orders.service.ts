@@ -222,6 +222,40 @@ export class OrdersService {
       include: {
         category: true,
         job_type: true,
+        employee: true,
+        items: {
+          include: {
+            item: true,
+          },
+        },
+      },
+    });
+  }
+
+  async finish(id: number, owner: number) {
+    const order = await this.prisma.order.findFirst({
+      where: {
+        id,
+        employee_id: owner,
+      },
+    });
+    if (!order || !owner)
+      throw new HttpException(
+        {
+          message: "You can't finish a order job you don't work on",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    return await this.prisma.order.update({
+      where: { id },
+      data: {
+        status: 'WAITING',
+        code: Math.floor(1000 + Math.random() * 9000),
+      },
+      include: {
+        category: true,
+        job_type: true,
+        employee: true,
         items: {
           include: {
             item: true,

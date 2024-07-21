@@ -43,7 +43,6 @@ export class ConstructionsController {
     @Body() updateConstructionDto: UpdateConstructionDto,
     @Owner() owner: number,
   ) {
-    console.log(owner);
     return this.constructionsService.update(id, updateConstructionDto, owner);
   }
 
@@ -57,7 +56,7 @@ export class ConstructionsController {
     return this.constructionsService.start(id, owner);
   }
 
-  @Post('/start/:id')
+  @Post('/finish/:id')
   finish(@Param('id', ParseIntPipe) id: number, @Owner() owner: number) {
     return this.constructionsService.finish(id, owner);
   }

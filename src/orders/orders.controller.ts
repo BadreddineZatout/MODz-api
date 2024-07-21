@@ -74,4 +74,9 @@ export class OrdersController {
   remove(@OrderExists() id: number, @Owner() owner: number) {
     return this.ordersService.remove(id, owner);
   }
+
+  @Post('/finish/:id')
+  finish(@OrderExists() id: number, @Owner() owner: number) {
+    return this.ordersService.finish(id, owner);
+  }
 }
