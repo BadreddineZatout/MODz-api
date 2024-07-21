@@ -79,4 +79,13 @@ export class OrdersController {
   finish(@OrderExists() id: number, @Owner() owner: number) {
     return this.ordersService.finish(id, owner);
   }
+
+  @Post('/validate/:id')
+  validate(
+    @OrderExists() id: number,
+    @Body() { code }: { code: number },
+    @Owner() owner: number,
+  ) {
+    return this.ordersService.validate(id, owner, code);
+  }
 }

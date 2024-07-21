@@ -264,4 +264,43 @@ export class OrdersService {
       },
     });
   }
+
+  async validate(id: number, owner: number, code: number) {
+    const order = await this.prisma.order.findFirst({
+      where: {
+        id,
+        employee_id: owner,
+      },
+    });
+    if (!order || !owner)
+      throw new HttpException(
+        {
+          message: "You can't finish a order job you don't work on",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    if (order.code !== code)
+      throw new HttpException(
+        {
+          message: 'Wrong Validation Code',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    return await this.prisma.order.update({
+      where: { id },
+      data: {
+        status: 'DONE',
+      },
+      include: {
+        category: true,
+        job_type: true,
+        employee: true,
+        items: {
+          include: {
+            item: true,
+          },
+        },
+      },
+    });
+  }
 }
