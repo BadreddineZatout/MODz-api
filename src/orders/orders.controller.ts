@@ -56,6 +56,11 @@ export class OrdersController {
     return this.ordersService.update(id, updateOrderDto, owner);
   }
 
+  @Post('/start/:id')
+  start(@OrderExists() id: number) {
+    return this.ordersService.start(id);
+  }
+
   @Post('/cancel/:id')
   cancel(
     @OrderExists() id: number,

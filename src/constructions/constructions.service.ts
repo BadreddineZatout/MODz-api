@@ -153,4 +153,26 @@ export class ConstructionsService {
       where: { id, client_id: owner },
     });
   }
+
+  async start(id: number, owner: number) {
+    const construction = await this.prisma.construction.findFirst({
+      where: {
+        id,
+        client_id: owner,
+      },
+    });
+    if (!construction || !owner)
+      throw new HttpException(
+        {
+          message: "You can't start a construction job you don't own",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    return await this.prisma.construction.update({
+      where: { id },
+      data: {
+        status: 'PROCESSING',
+      },
+    });
+  }
 }

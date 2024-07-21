@@ -212,4 +212,13 @@ export class OrdersService {
       },
     });
   }
+
+  async start(id: number) {
+    return await this.prisma.order.update({
+      where: { id },
+      data: {
+        status: 'PROCESSING',
+      },
+    });
+  }
 }
