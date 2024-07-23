@@ -12,6 +12,7 @@ export class ConstructionsService {
     return await this.prisma.construction.create({
       data: {
         client_id: createConstructionDto.client_id,
+        construction_type: createConstructionDto.construction_type,
         description: createConstructionDto.description,
         date: new Date(createConstructionDto.date),
         hour: createConstructionDto.hour,
@@ -109,6 +110,7 @@ export class ConstructionsService {
     return await this.prisma.construction.update({
       where: { id },
       data: {
+        construction_type: updateConstructionDto.construction_type,
         description: updateConstructionDto.description,
         date: updateConstructionDto.date
           ? new Date(updateConstructionDto.date)

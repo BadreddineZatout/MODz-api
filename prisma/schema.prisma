@@ -259,15 +259,16 @@ model Offer {
 }
 
 model Construction {
-  id          Int         @id @default(autoincrement())
-  client_id   Int
-  description String?     @db.Text
-  date        DateTime
-  hour        String
-  type        WorkType?
-  periority   Int         @default(1)
-  status      OrderStatus @default(PENDING)
-  accepted_at DateTime?
+  id                Int              @id @default(autoincrement())
+  client_id         Int
+  construction_type ConstructionType?
+  description       String?          @db.Text
+  date              DateTime
+  hour              String
+  type              WorkType?
+  periority         Int              @default(1)
+  status            OrderStatus      @default(PENDING)
+  accepted_at       DateTime?
 
   client     Client             @relation(fields: [client_id], references: [id], onDelete: Cascade)
   categories Category[]         @relation("category_construction")
@@ -494,4 +495,9 @@ enum SubscriptionStatus {
 enum WorkType {
   INDIVIDUAL
   GROUP
+}
+
+enum ConstructionType {
+  VILLA
+  APARTMENT
 }

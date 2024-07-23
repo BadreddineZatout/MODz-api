@@ -1,7 +1,9 @@
+import { ConstructionType } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
+  IsEnum,
   IsOptional,
   IsString,
   Min,
@@ -23,6 +25,10 @@ export class CreateConstructionDto {
 
   @IsString()
   hour: string;
+
+  @IsString()
+  @IsEnum(ConstructionType)
+  construction_type: ConstructionType;
 
   @Transform(({ value }) =>
     value.map((item) => {
