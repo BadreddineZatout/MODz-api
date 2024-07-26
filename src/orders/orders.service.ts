@@ -48,11 +48,13 @@ export class OrdersService {
         job_type_id: query.job_type_id,
         status: query.status,
         is_urgent: query.is_urgent,
+        employee_id: query.employee_id,
       },
       include: {
         category: true,
         job_type: true,
         client: true,
+        employee: true,
         items: {
           include: {
             item: true,
@@ -81,6 +83,7 @@ export class OrdersService {
         category: true,
         job_type: true,
         client: true,
+        employee: true,
         items: {
           include: {
             item: true,
