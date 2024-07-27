@@ -38,7 +38,18 @@ export class OffersService {
     return await this.prisma.offer.create({
       data: createOfferDto,
       include: {
-        order: true,
+        order: {
+          include: {
+            category: true,
+            job_type: true,
+            client: true,
+            items: {
+              include: {
+                item: true,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -154,7 +165,18 @@ export class OffersService {
       where: { id },
       data: updateOfferDto,
       include: {
-        order: true,
+        order: {
+          include: {
+            category: true,
+            job_type: true,
+            client: true,
+            items: {
+              include: {
+                item: true,
+              },
+            },
+          },
+        },
       },
     });
   }
