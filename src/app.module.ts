@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { CategoriesModule } from './categories/categories.module';
 import { ConstructionsModule } from './constructions/constructions.module';
+import { ContactModule } from './contact/contact.module';
 import { OffersModule } from './offers/offers.module';
 import { OrdersModule } from './orders/orders.module';
 import { PrismaService } from './prisma.service';
@@ -26,6 +27,7 @@ import { UsersModule } from './users/users.module';
     ConstructionsModule,
     ProblemsModule,
     SubscriptionsModule,
+    ContactModule,
   ],
   controllers: [],
   providers: [PrismaService],

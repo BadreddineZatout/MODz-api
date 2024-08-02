@@ -259,15 +259,15 @@ model Offer {
 }
 
 model Construction {
-  id                Int              @id @default(autoincrement())
+  id                Int               @id @default(autoincrement())
   client_id         Int
   construction_type ConstructionType?
-  description       String?          @db.Text
+  description       String?           @db.Text
   date              DateTime
   hour              String
   type              WorkType?
-  periority         Int              @default(1)
-  status            OrderStatus      @default(PENDING)
+  periority         Int               @default(1)
+  status            OrderStatus       @default(PENDING)
   accepted_at       DateTime?
 
   client     Client             @relation(fields: [client_id], references: [id], onDelete: Cascade)
@@ -339,6 +339,17 @@ model CancelReason {
   cancelBy Reporter
 
   @@map("cancel_reasons")
+}
+
+model Message {
+  id      Int     @id @default(autoincrement())
+  name    String
+  email   String?
+  phone   String?
+  message String  @db.Text
+  read    Boolean @default(false)
+
+  @@map("messages")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
