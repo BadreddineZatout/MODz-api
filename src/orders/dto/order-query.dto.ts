@@ -47,4 +47,12 @@ export class OrderQuery {
   @IsOptional()
   @Transform(({ value }) => value == 'true')
   is_urgent: boolean;
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  state_id: number;
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  province_id: number;
 }

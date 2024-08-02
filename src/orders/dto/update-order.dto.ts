@@ -40,6 +40,14 @@ export class UpdateOrderDto {
   @IsOptional()
   @Transform(({ value }) => parseInt(value))
   employee_id: number;
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  state_id: number;
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  province_id: number;
 }
 
 class ItemDto {

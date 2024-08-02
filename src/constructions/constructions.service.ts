@@ -16,6 +16,8 @@ export class ConstructionsService {
         description: createConstructionDto.description,
         date: new Date(createConstructionDto.date),
         hour: createConstructionDto.hour,
+        state_id: createConstructionDto.state_id,
+        province_id: createConstructionDto.province_id,
         categories: {
           connect: createConstructionDto.categories,
         },
@@ -26,6 +28,8 @@ export class ConstructionsService {
       include: {
         client: true,
         categories: true,
+        state: true,
+        province: true,
         items: {
           include: {
             item: true,
@@ -43,6 +47,8 @@ export class ConstructionsService {
       where: {
         client_id: query.client_id,
         status: query.status,
+        state_id: query.state_id,
+        province_id: query.province_id,
         categories: query.category_id && {
           some: {
             id: query.category_id,
@@ -53,6 +59,8 @@ export class ConstructionsService {
         client: true,
         categories: true,
         employees: true,
+        state: true,
+        province: true,
         items: {
           include: {
             item: true,
@@ -69,6 +77,8 @@ export class ConstructionsService {
         client: true,
         categories: true,
         employees: true,
+        state: true,
+        province: true,
         items: {
           include: {
             item: true,
@@ -123,11 +133,15 @@ export class ConstructionsService {
         categories: updateConstructionDto.categories && {
           set: updateConstructionDto.categories,
         },
+        state_id: updateConstructionDto.state_id,
+        province_id: updateConstructionDto.province_id,
       },
       include: {
         client: true,
         categories: true,
         employees: true,
+        state: true,
+        province: true,
         items: {
           include: {
             item: true,
@@ -179,6 +193,8 @@ export class ConstructionsService {
         client: true,
         categories: true,
         employees: true,
+        state: true,
+        province: true,
         items: {
           include: {
             item: true,
@@ -211,6 +227,8 @@ export class ConstructionsService {
         client: true,
         categories: true,
         employees: true,
+        state: true,
+        province: true,
         items: {
           include: {
             item: true,

@@ -104,27 +104,31 @@ model Image {
 }
 
 model State {
-  id        Int        @id @default(autoincrement())
-  code      Int
-  name      String
-  name_ar   String
-  employees Employee[]
-  Provider  Provider[]
-  provinces Province[]
+  id            Int            @id @default(autoincrement())
+  code          Int
+  name          String
+  name_ar       String
+  employees     Employee[]
+  Provider      Provider[]
+  provinces     Province[]
+  orders        Order[]
+  constructions Construction[]
 
   @@map("states")
 }
 
 model Province {
-  id           Int        @id @default(autoincrement())
-  name         String
-  name_ar      String
-  city_name    String
-  city_name_ar String
-  state_id     Int
-  employees    Employee[]
-  Provider     Provider[]
-  state        State      @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  id            Int            @id @default(autoincrement())
+  name          String
+  name_ar       String
+  city_name     String
+  city_name_ar  String
+  state_id      Int
+  employees     Employee[]
+  Provider      Provider[]
+  state         State          @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  orders        Order[]
+  constructions Construction[]
 
   @@index([state_id], map: "provinces_state_id_fkey")
   @@map("provinces")
@@ -215,6 +219,8 @@ model Order {
   code          Int?
   employee_id   Int?
   cancel_reason String?     @db.Text
+  state_id      Int?
+  province_id   Int?
 
   items    ItemOrder[]
   Offer    Offer[]
@@ -223,6 +229,8 @@ model Order {
   employee Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)
   job_type JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
   problems Problem[]
+  state    State?      @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  province Province?   @relation(fields: [province_id], references: [id], onDelete: Cascade)
 
   @@index([category_id], map: "orders_category_id_fkey")
   @@index([client_id], map: "orders_client_id_fkey")
@@ -269,12 +277,16 @@ model Construction {
   periority         Int               @default(1)
   status            OrderStatus       @default(PENDING)
   accepted_at       DateTime?
+  state_id          Int?
+  province_id       Int?
 
   client     Client             @relation(fields: [client_id], references: [id], onDelete: Cascade)
   categories Category[]         @relation("category_construction")
   items      ConstructionItem[]
   problems   Problem[]
   employees  Employee[]         @relation("construction_employee")
+  state      State?             @relation(fields: [state_id], references: [id], onDelete: Cascade)
+  province   Province?          @relation(fields: [province_id], references: [id], onDelete: Cascade)
 
   @@map("constructions")
 }

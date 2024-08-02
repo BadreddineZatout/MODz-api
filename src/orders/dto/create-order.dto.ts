@@ -2,6 +2,7 @@ import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
+  IsNotEmpty,
   IsOptional,
   IsString,
   Min,
@@ -42,6 +43,14 @@ export class CreateOrderDto {
   @IsOptional()
   @IsArray()
   items: ItemDto[];
+
+  @IsNotEmpty()
+  @Transform(({ value }) => parseInt(value))
+  state_id: number;
+
+  @IsNotEmpty()
+  @Transform(({ value }) => parseInt(value))
+  province_id: number;
 }
 
 class ItemDto {

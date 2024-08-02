@@ -4,6 +4,7 @@ import {
   IsArray,
   IsDateString,
   IsEnum,
+  IsNotEmpty,
   IsOptional,
   IsString,
   Min,
@@ -40,6 +41,14 @@ export class CreateConstructionDto {
 
   @IsArray()
   items: ConstructionItem[];
+
+  @IsNotEmpty()
+  @Transform(({ value }) => parseInt(value))
+  state_id: number;
+
+  @IsNotEmpty()
+  @Transform(({ value }) => parseInt(value))
+  province_id: number;
 }
 
 type ConstructionItem = {

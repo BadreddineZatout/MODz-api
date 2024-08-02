@@ -31,4 +31,12 @@ export class ConstructionQuery {
   @IsString()
   @IsEnum(OrderStatus)
   status: OrderStatus;
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  state_id: number;
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  province_id: number;
 }
