@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import * as moment from 'moment';
 import { PrismaService } from 'src/prisma.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
-import moment from 'moment';
 
 @Injectable()
 export class OffersService {
@@ -215,7 +215,6 @@ export class OffersService {
         },
         HttpStatus.BAD_REQUEST,
       );
-
     await this.prisma.order.update({
       where: {
         id: order.id,
