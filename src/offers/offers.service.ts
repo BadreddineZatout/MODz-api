@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { UpdateOfferDto } from './dto/update-offer.dto';
+import moment from 'moment';
 
 @Injectable()
 export class OffersService {
@@ -221,6 +222,7 @@ export class OffersService {
       },
       data: {
         employee_id: offer.employee_id,
+        accepted_at: moment().toDate(),
       },
     });
 
