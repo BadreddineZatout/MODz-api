@@ -223,7 +223,7 @@ model Order {
   province_id   Int?
 
   items    ItemOrder[]
-  Offer    Offer[]
+  offers   Offer[]
   category Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
   client   Client      @relation(fields: [client_id], references: [id], onDelete: Cascade)
   employee Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)

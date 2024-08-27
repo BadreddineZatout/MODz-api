@@ -63,6 +63,7 @@ export class OrdersService {
         employee: true,
         state: true,
         province: true,
+        offers: true,
         items: {
           include: {
             item: true,
@@ -74,6 +75,14 @@ export class OrdersService {
     return orders.map((order) => {
       return {
         ...order,
+        offers: undefined,
+        offer: order.employee_id
+          ? order.offers.find(
+              (offer) =>
+                offer.employee_id == order.employee_id &&
+                offer.status == 'ACCEPTED',
+            )
+          : null,
         items: order.items.map((item) => {
           return {
             ...item.item,
@@ -94,6 +103,7 @@ export class OrdersService {
         employee: true,
         state: true,
         province: true,
+        offers: true,
         items: {
           include: {
             item: true,
@@ -104,6 +114,14 @@ export class OrdersService {
 
     return {
       ...order,
+      offers: undefined,
+      offer: order.employee_id
+        ? order.offers.find(
+            (offer) =>
+              offer.employee_id == order.employee_id &&
+              offer.status == 'ACCEPTED',
+          )
+        : null,
       items: order.items.map((item) => {
         return {
           ...item.item,
