@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import * as moment from 'moment';
 import { PrismaService } from 'src/prisma.service';
 import { CancelOrderDto } from './dto/cancel-order.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -253,6 +254,7 @@ export class OrdersService {
       where: { id },
       data: {
         status: 'PROCESSING',
+        started_at: moment().toDate(),
       },
       include: {
         category: true,

@@ -216,6 +216,7 @@ model Order {
   status        OrderStatus @default(PENDING)
   is_urgent     Boolean     @default(false)
   accepted_at   DateTime?
+  started_at    DateTime?
   code          Int?
   employee_id   Int?
   cancel_reason String?     @db.Text
