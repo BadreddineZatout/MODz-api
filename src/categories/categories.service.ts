@@ -32,6 +32,14 @@ export class CategoriesService {
           where: {
             model_type: 'App\\Models\\Category',
             model_id: category.id,
+            collection_name: 'default',
+          },
+        });
+        const slider_media = await this.prisma.media.findMany({
+          where: {
+            model_type: 'App\\Models\\Category',
+            model_id: category.id,
+            collection_name: 'slider',
           },
         });
         return {
@@ -45,6 +53,14 @@ export class CategoriesService {
             };
           }),
           media: media.map((media) => {
+            return {
+              id: Number(media.id),
+              name: media.file_name,
+              path: `${process.env.ADMIN_URL}/storage/${media.id}/${media.file_name}`,
+              type: 'CATEGORY',
+            };
+          }),
+          slider_media: slider_media.map((media) => {
             return {
               id: Number(media.id),
               name: media.file_name,
