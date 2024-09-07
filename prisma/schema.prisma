@@ -31,6 +31,7 @@ model Client {
   profile       ProfileUser?
   constructions Construction[]
   problems      Problem[]
+  ratings       Rating[]
 
   @@map("clients")
 }
@@ -57,6 +58,7 @@ model Employee {
   media         Image[]        @relation("employeetoimage")
   problems      Problem[]
   constructions Construction[] @relation("construction_employee")
+  ratings       Rating[]
 
   @@index([province_id], map: "employees_province_id_fkey")
   @@index([state_id], map: "employees_state_id_fkey")
@@ -363,6 +365,19 @@ model Message {
   read    Boolean @default(false)
 
   @@map("messages")
+}
+
+model Rating {
+  id          Int     @id @default(autoincrement())
+  client_id   Int
+  employee_id Int
+  score       Int
+  comment     String?
+
+  client   Client   @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  employee Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+
+  @@map("ratings")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
