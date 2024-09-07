@@ -145,6 +145,7 @@ export class UsersService {
               state: true,
               province: true,
               categories: true,
+              ratings: true,
             },
           })
       : null;
@@ -156,6 +157,19 @@ export class UsersService {
         (subscription) => subscription.status === 'ACTIVE',
       ),
       profile: profile,
+      rating:
+        user.current_role == 'EMPLOYEE'
+          ? (
+              await this.prisma.rating.aggregate({
+                _avg: {
+                  score: true,
+                },
+                where: {
+                  employee_id: user.profile.employee_id,
+                },
+              })
+            )?._avg.score
+          : undefined,
       email_confirmation: user.verified_at
         ? null
         : await this.sendConfirmEmail(user.id, user.email),
