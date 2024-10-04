@@ -12,6 +12,7 @@ import { StatesModule } from './states/states.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { UsersModule } from './users/users.module';
 import { RatingsModule } from './ratings/ratings.module';
+import { AdsModule } from './ads/ads.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { RatingsModule } from './ratings/ratings.module';
     SubscriptionsModule,
     ContactModule,
     RatingsModule,
+    AdsModule,
   ],
   controllers: [],
   providers: [PrismaService],
