@@ -24,6 +24,7 @@ export class AdsService {
         return {
           id: ad.id,
           name: ad.name,
+          url: ad.url,
           media: media
             .map((media) => {
               return {

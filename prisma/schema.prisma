@@ -384,6 +384,7 @@ model Ad {
   id       Int     @id @default(autoincrement())
   name     String
   is_shown Boolean @default(true)
+  url      String?
 
   @@map("ads")
 }
