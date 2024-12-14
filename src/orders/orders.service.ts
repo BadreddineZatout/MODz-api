@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as moment from 'moment';
 import { PrismaService } from 'src/prisma.service';
+import { calculateDistance } from 'src/utils/distance';
 import { CancelOrderDto } from './dto/cancel-order.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderQuery } from './dto/order-query.dto';
@@ -40,7 +41,7 @@ export class OrdersService {
 
   async findAll(query: OrderQuery) {
     const take = query.per_page ?? 10;
-    const orders = await this.prisma.order.findMany({
+    let orders = await this.prisma.order.findMany({
       skip: query.page ? (query.page - 1) * take : 0,
       take,
       where: {
@@ -68,6 +69,18 @@ export class OrdersService {
         },
       },
     });
+
+    if (query.latitude && query.longitude) {
+      orders = orders.filter((order) => {
+        const distance = calculateDistance(
+          query.latitude,
+          query.longitude,
+          order.latitude,
+          order.longitude,
+        );
+        return distance <= (query.radius ?? 50);
+      });
+    }
 
     return orders.map((order) => {
       return {

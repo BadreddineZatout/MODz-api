@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { calculateDistance } from 'src/utils/distance';
 import { ConstructionQuery } from './dto/constructions-query.dto';
 import { CreateConstructionDto } from './dto/create-construction.dto';
 import { UpdateConstructionDto } from './dto/update-construction.dto';
@@ -39,14 +40,12 @@ export class ConstructionsService {
 
   async findAll(query: ConstructionQuery) {
     const take = query.per_page ?? 10;
-    return await this.prisma.construction.findMany({
+    const constructions = await this.prisma.construction.findMany({
       skip: query.page ? (query.page - 1) * take : 0,
       take,
       where: {
         client_id: query.client_id,
         status: query.status,
-        // latitude: query.latitude,
-        // longitude: query.longitude,
         categories: query.category_id && {
           some: {
             id: query.category_id,
@@ -64,6 +63,20 @@ export class ConstructionsService {
         },
       },
     });
+
+    if (query.latitude && query.longitude) {
+      return constructions.filter((construction) => {
+        const distance = calculateDistance(
+          query.latitude,
+          query.longitude,
+          construction.latitude,
+          construction.longitude,
+        );
+        return distance <= (query.radius ?? 50);
+      });
+    }
+
+    return constructions;
   }
 
   async findOne(id: number) {

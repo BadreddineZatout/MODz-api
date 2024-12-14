@@ -55,4 +55,8 @@ export class OrderQuery {
   @IsOptional()
   @Transform(({ value }) => parseFloat(value))
   longitude: number;
+
+  @IsOptional()
+  @Transform(({ value }) => parseFloat(value))
+  radius: number;
 }
