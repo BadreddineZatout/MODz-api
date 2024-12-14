@@ -82,8 +82,6 @@ export class UsersService {
             where: { id: user.profile.employee_id },
             include: {
               media: true,
-              state: true,
-              province: true,
               categories: true,
             },
           })
@@ -142,8 +140,6 @@ export class UsersService {
             where: { id: user.profile.employee_id },
             include: {
               media: true,
-              state: true,
-              province: true,
               categories: true,
               ratings: true,
             },
@@ -200,12 +196,12 @@ export class UsersService {
         last_name: employee_data.last_name,
         phone: employee_data.phone,
         national_id: employee_data.national_id,
-        state_id: employee_data.state_id,
-        province_id: employee_data.province_id,
+        latitude: employee_data.latitude,
+        longitude: employee_data.longitude,
         is_active: false,
         categories: { connect: { id: employee_data.category_id } },
       },
-      include: { state: true, province: true, categories: true },
+      include: { categories: true },
     });
 
     await this.prisma.profileUser.create({
@@ -235,8 +231,6 @@ export class UsersService {
             where: { id: user.profile.employee_id },
             include: {
               media: true,
-              state: true,
-              province: true,
               categories: true,
             },
           })
@@ -307,15 +301,13 @@ export class UsersService {
         last_name: employee_data.last_name,
         phone: employee_data.phone,
         national_id: employee_data.national_id,
-        state_id: employee_data.state_id,
-        province_id: employee_data.province_id,
+        latitude: employee_data.latitude,
+        longitude: employee_data.longitude,
         categories: employee_data.category_id && {
           set: [{ id: employee_data.category_id }],
         },
       },
       include: {
-        state: true,
-        province: true,
         categories: true,
       },
     });

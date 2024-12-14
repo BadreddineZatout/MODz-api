@@ -41,8 +41,8 @@ model Employee {
   first_name            String
   last_name             String
   phone                 String
-  state_id              Int
-  province_id           Int
+  latitude              Float?
+  longitude             Float?
   is_active             Boolean
   status                Status   @default(PENDING)
   national_id           String?
@@ -50,8 +50,6 @@ model Employee {
   can_work_construction Boolean  @default(false)
 
   categories    Category[]     @relation("category_employee")
-  province      Province       @relation(fields: [province_id], references: [id], onDelete: Cascade)
-  state         State          @relation(fields: [state_id], references: [id], onDelete: Cascade)
   offers        Offer[]
   orders        Order[]
   profile       ProfileUser?
@@ -60,8 +58,6 @@ model Employee {
   constructions Construction[] @relation("construction_employee")
   ratings       Rating[]
 
-  @@index([province_id], map: "employees_province_id_fkey")
-  @@index([state_id], map: "employees_state_id_fkey")
   @@map("employees")
 }
 
@@ -106,31 +102,25 @@ model Image {
 }
 
 model State {
-  id            Int            @id @default(autoincrement())
-  code          Int
-  name          String
-  name_ar       String
-  employees     Employee[]
-  Provider      Provider[]
-  provinces     Province[]
-  orders        Order[]
-  constructions Construction[]
+  id        Int        @id @default(autoincrement())
+  code      Int
+  name      String
+  name_ar   String
+  Provider  Provider[]
+  provinces Province[]
 
   @@map("states")
 }
 
 model Province {
-  id            Int            @id @default(autoincrement())
-  name          String
-  name_ar       String
-  city_name     String
-  city_name_ar  String
-  state_id      Int
-  employees     Employee[]
-  Provider      Provider[]
-  state         State          @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  orders        Order[]
-  constructions Construction[]
+  id           Int        @id @default(autoincrement())
+  name         String
+  name_ar      String
+  city_name    String
+  city_name_ar String
+  state_id     Int
+  Provider     Provider[]
+  state        State      @relation(fields: [state_id], references: [id], onDelete: Cascade)
 
   @@index([state_id], map: "provinces_state_id_fkey")
   @@map("provinces")
@@ -222,8 +212,8 @@ model Order {
   code          Int?
   employee_id   Int?
   cancel_reason String?     @db.Text
-  state_id      Int?
-  province_id   Int?
+  latitude      Float?
+  longitude     Float?
 
   items    ItemOrder[]
   offers   Offer[]
@@ -232,8 +222,6 @@ model Order {
   employee Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)
   job_type JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
   problems Problem[]
-  state    State?      @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  province Province?   @relation(fields: [province_id], references: [id], onDelete: Cascade)
 
   @@index([category_id], map: "orders_category_id_fkey")
   @@index([client_id], map: "orders_client_id_fkey")
@@ -280,16 +268,14 @@ model Construction {
   periority         Int               @default(1)
   status            OrderStatus       @default(PENDING)
   accepted_at       DateTime?
-  state_id          Int?
-  province_id       Int?
+  latitude          Float?
+  longitude         Float?
 
   client     Client             @relation(fields: [client_id], references: [id], onDelete: Cascade)
   categories Category[]         @relation("category_construction")
   items      ConstructionItem[]
   problems   Problem[]
   employees  Employee[]         @relation("construction_employee")
-  state      State?             @relation(fields: [state_id], references: [id], onDelete: Cascade)
-  province   Province?          @relation(fields: [province_id], references: [id], onDelete: Cascade)
 
   @@map("constructions")
 }
@@ -389,7 +375,6 @@ model Ad {
   @@map("ads")
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model media {
   id                    BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
   model_type            String    @db.VarChar(255)

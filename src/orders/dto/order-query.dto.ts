@@ -49,10 +49,10 @@ export class OrderQuery {
   is_urgent: boolean;
 
   @IsOptional()
-  @Transform(({ value }) => parseInt(value))
-  state_id: number;
+  @Transform(({ value }) => parseFloat(value))
+  latitude: number;
 
   @IsOptional()
-  @Transform(({ value }) => parseInt(value))
-  province_id: number;
+  @Transform(({ value }) => parseFloat(value))
+  longitude: number;
 }

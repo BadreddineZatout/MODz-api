@@ -20,8 +20,8 @@ export class OrdersService {
         category_id: createOrderDto.category_id,
         job_type_id: createOrderDto.job_type_id,
         is_urgent: createOrderDto.is_urgent,
-        state_id: createOrderDto.state_id,
-        province_id: createOrderDto.province_id,
+        latitude: createOrderDto.latitude,
+        longitude: createOrderDto.longitude,
         items: {
           create: createOrderDto.items,
         },
@@ -29,8 +29,6 @@ export class OrdersService {
       include: {
         category: true,
         job_type: true,
-        state: true,
-        province: true,
         items: {
           include: {
             item: true,
@@ -54,16 +52,14 @@ export class OrdersService {
         status: query.status,
         is_urgent: query.is_urgent,
         employee_id: query.employee_id,
-        state_id: query.state_id,
-        province_id: query.province_id,
+        // latitude: query.latitude,
+        // longitude: query.longitude,
       },
       include: {
         category: true,
         job_type: true,
         client: true,
         employee: true,
-        state: true,
-        province: true,
         offers: true,
         items: {
           include: {
@@ -102,8 +98,6 @@ export class OrdersService {
         job_type: true,
         client: true,
         employee: true,
-        state: true,
-        province: true,
         offers: true,
         items: {
           include: {
@@ -168,8 +162,8 @@ export class OrdersService {
         hour: updateOrderDto.hour,
         is_urgent: updateOrderDto.is_urgent,
         status: updateOrderDto.status,
-        state_id: updateOrderDto.state_id,
-        province_id: updateOrderDto.province_id,
+        latitude: updateOrderDto.latitude,
+        longitude: updateOrderDto.longitude,
         accepted_at: updateOrderDto.accepted_at
           ? new Date(updateOrderDto.accepted_at)
           : updateOrderDto.accepted_at,
@@ -178,8 +172,6 @@ export class OrdersService {
       include: {
         category: true,
         job_type: true,
-        state: true,
-        province: true,
         items: {
           include: {
             item: true,
@@ -260,8 +252,6 @@ export class OrdersService {
         category: true,
         job_type: true,
         employee: true,
-        state: true,
-        province: true,
         items: {
           include: {
             item: true,
@@ -295,8 +285,6 @@ export class OrdersService {
         category: true,
         job_type: true,
         employee: true,
-        state: true,
-        province: true,
         items: {
           include: {
             item: true,
@@ -336,8 +324,6 @@ export class OrdersService {
         category: true,
         job_type: true,
         employee: true,
-        state: true,
-        province: true,
         items: {
           include: {
             item: true,

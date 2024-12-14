@@ -83,8 +83,6 @@ export class OffersService {
         employee: {
           include: {
             categories: true,
-            state: true,
-            province: true,
             media: true,
           },
         },
@@ -126,8 +124,6 @@ export class OffersService {
         employee: {
           include: {
             categories: true,
-            state: true,
-            province: true,
             media: true,
           },
         },
