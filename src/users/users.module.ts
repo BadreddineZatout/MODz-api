@@ -6,6 +6,8 @@ import { PrismaService } from 'src/prisma.service';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { IsEmailUniqueConstraint } from './validators/is-email-unique.validator';
+import { IsNationalIdUniqueConstraint } from './validators/is-national-id-unique.validator';
+import { IsPhoneUniqueConstraint } from './validators/is-phone-unique.validator';
 
 @Module({
   imports: [
@@ -37,6 +39,12 @@ import { IsEmailUniqueConstraint } from './validators/is-email-unique.validator'
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService, PrismaService, IsEmailUniqueConstraint],
+  providers: [
+    UsersService,
+    PrismaService,
+    IsEmailUniqueConstraint,
+    IsPhoneUniqueConstraint,
+    IsNationalIdUniqueConstraint,
+  ],
 })
 export class UsersModule {}

@@ -1,10 +1,20 @@
-import { IsNotEmpty } from 'class-validator';
+import { plainToClass, Transform } from 'class-transformer';
+import { IsNotEmpty, Validate, ValidateNested } from 'class-validator';
+import { IsNationalIdUniqueConstraint } from '../validators/is-national-id-unique.validator';
+import { IsPhoneUnique } from '../validators/is-phone-unique.validator';
 
 export class CreateProfileDto {
   @IsNotEmpty()
   current_role: string;
   @IsNotEmpty()
   user_id: number;
+  @ValidateNested()
+  @Transform(({ value, obj }) => {
+    if (obj.current_role === 'CLIENT') {
+      return plainToClass(CreateClientProfileDto, value);
+    }
+    return plainToClass(CreateEmployeeProfileDto, value);
+  })
   data: CreateClientProfileDto | CreateEmployeeProfileDto;
 }
 
@@ -14,6 +24,7 @@ export class CreateClientProfileDto {
   @IsNotEmpty()
   last_name: string;
   @IsNotEmpty()
+  @IsPhoneUnique('CLIENT')
   phone: string;
 }
 
@@ -23,8 +34,10 @@ export class CreateEmployeeProfileDto {
   @IsNotEmpty()
   last_name: string;
   @IsNotEmpty()
+  @IsPhoneUnique('EMPLOYEE')
   phone: string;
   @IsNotEmpty()
+  @Validate(IsNationalIdUniqueConstraint)
   national_id: string;
   @IsNotEmpty()
   latitude: number;

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { AdsModule } from './ads/ads.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ConstructionsModule } from './constructions/constructions.module';
 import { ContactModule } from './contact/contact.module';
@@ -8,11 +9,10 @@ import { OrdersModule } from './orders/orders.module';
 import { PrismaService } from './prisma.service';
 import { ProblemsModule } from './problems/problems.module';
 import { ProvidersModule } from './providers/providers.module';
+import { RatingsModule } from './ratings/ratings.module';
 import { StatesModule } from './states/states.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { UsersModule } from './users/users.module';
-import { RatingsModule } from './ratings/ratings.module';
-import { AdsModule } from './ads/ads.module';
 
 @Module({
   imports: [
