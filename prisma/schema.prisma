@@ -316,6 +316,7 @@ model Pack {
   price         Float?         @default(0.0)
   duration      Int            @default(1) //duration per month
   order_limit   Int?
+  description   String?        @db.Text
   subscriptions Subscription[]
 
   @@map("packs")
