@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -131,6 +132,12 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.usersService.saveMedia(id, files, 'ID');
+  }
+
+  @Delete('/users/:id')
+  @UseGuards(AuthGuard)
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.delete(id);
   }
 
   @Post('/users/confirm-email/:id')

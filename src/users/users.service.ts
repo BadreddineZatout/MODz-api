@@ -428,6 +428,31 @@ export class UsersService {
     return { message: 'Password reset' };
   }
 
+  async delete(userId: number) {
+    const user = await this.prisma.user.findFirst({
+      where: { id: userId },
+      include: {
+        profile: true,
+      },
+    });
+
+    if (user.current_role == 'CLIENT') {
+      await this.prisma.client.delete({
+        where: { id: user.profile.client_id },
+      });
+    } else {
+      await this.prisma.employee.delete({
+        where: { id: user.profile.employee_id },
+      });
+    }
+
+    await this.prisma.user.delete({
+      where: { id: userId },
+    });
+
+    return { message: 'User deleted' };
+  }
+
   private generateRandomNumber() {
     const min = 100000; // Minimum 6-digit number
     const max = 999999; // Maximum 6-digit number
