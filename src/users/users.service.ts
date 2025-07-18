@@ -1,7 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { MediaType, Prisma, Role } from '@prisma/client';
+import { MediaType, Prisma, Role, Status } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as moment from 'moment';
 import { PrismaService } from 'src/prisma.service';
@@ -86,6 +86,15 @@ export class UsersService {
             },
           })
       : null;
+
+    if (profile?.status == Status.REFUSED) {
+      throw new HttpException(
+        {
+          message: ['Your account is not active'],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     return {
       user: {
@@ -177,7 +186,7 @@ export class UsersService {
     client_data: CreateClientProfileDto,
   ) {
     const client = await this.prisma.client.create({
-      data: client_data,
+      data: { ...client_data, status: Status.VALID },
     });
 
     await this.prisma.profileUser.create({
