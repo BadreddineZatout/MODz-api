@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { TokenGuard } from 'src/orders/guards/token.guard';
 import { Owner } from 'src/users/decorators/owner.decorator';
+import { BanGuard } from 'src/users/guards/ban.guard';
 import { OfferExists } from './decorators/offer-exists.decorator';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { OfferQuery } from './dto/offer-query.dto';
@@ -18,7 +19,7 @@ import { UpdateOfferDto } from './dto/update-offer.dto';
 import { OffersService } from './offers.service';
 
 @Controller('offers')
-@UseGuards(TokenGuard)
+@UseGuards(TokenGuard, BanGuard)
 export class OffersController {
   constructor(private readonly offersService: OffersService) {}
 

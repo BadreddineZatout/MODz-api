@@ -11,11 +11,12 @@ import {
 } from '@nestjs/common';
 import { TokenGuard } from 'src/orders/guards/token.guard';
 import { User } from 'src/users/decorators/user.decorator';
+import { BanGuard } from 'src/users/guards/ban.guard';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { SubscriptionsService } from './subscriptions.service';
 
 @Controller('subscriptions')
-@UseGuards(TokenGuard)
+@UseGuards(TokenGuard, BanGuard)
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 

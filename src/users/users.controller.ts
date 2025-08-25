@@ -26,6 +26,7 @@ import {
   UpdateEmployeeProfileDto,
 } from './Dtos/profile.dto';
 import { AuthGuard } from './guards/auth.guard';
+import { BanGuard } from './guards/ban.guard';
 import { ConfirmEmailGuard } from './guards/confirm-email.guard';
 import { ResetPasswordGuard } from './guards/reset-password.guard';
 import { UsersService } from './users.service';
@@ -45,13 +46,13 @@ export class UsersController {
   }
 
   @Get('users/:id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, BanGuard)
   getUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getUser(id);
   }
 
   @Post('/users/create-profile')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, BanGuard)
   createProfile(
     @Body()
     data: CreateProfileDto,
@@ -71,7 +72,7 @@ export class UsersController {
   }
 
   @Patch('/users/update-email/:id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, BanGuard)
   updateEmail(
     @Param('id', ParseIntPipe) id: number,
     @Body()
@@ -81,7 +82,7 @@ export class UsersController {
   }
 
   @Patch('/users/update-password/:id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, BanGuard)
   updatePassword(
     @Param('id', ParseIntPipe) id: number,
     @Body()
@@ -99,7 +100,7 @@ export class UsersController {
   }
 
   @Put('/users/update-profile/:id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, BanGuard)
   updateProfile(
     @Param('id', ParseIntPipe) id: number,
     @Body()
@@ -109,7 +110,7 @@ export class UsersController {
   }
 
   @Post('/users/upload-selfie/:id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, BanGuard)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: getStorageConfig('public/selfies'),
@@ -123,7 +124,7 @@ export class UsersController {
   }
 
   @Post('/users/upload-id/:id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, BanGuard)
   @UseInterceptors(
     FilesInterceptor('files', 2, { storage: getStorageConfig('public/ids') }),
   )
@@ -135,7 +136,7 @@ export class UsersController {
   }
 
   @Delete('/users/:id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, BanGuard)
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.delete(id);
   }

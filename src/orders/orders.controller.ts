@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Owner } from 'src/users/decorators/owner.decorator';
+import { BanGuard } from 'src/users/guards/ban.guard';
 import { OrderExists } from './decorators/order-exists.decorator';
 import { CancelOrderDto } from './dto/cancel-order.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -18,7 +19,7 @@ import { TokenGuard } from './guards/token.guard';
 import { OrdersService } from './orders.service';
 
 @Controller('orders')
-@UseGuards(TokenGuard)
+@UseGuards(TokenGuard, BanGuard)
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 

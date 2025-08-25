@@ -12,13 +12,14 @@ import {
 } from '@nestjs/common';
 import { TokenGuard } from 'src/orders/guards/token.guard';
 import { Owner } from 'src/users/decorators/owner.decorator';
+import { BanGuard } from 'src/users/guards/ban.guard';
 import { ConstructionsService } from './constructions.service';
 import { ConstructionQuery } from './dto/constructions-query.dto';
 import { CreateConstructionDto } from './dto/create-construction.dto';
 import { UpdateConstructionDto } from './dto/update-construction.dto';
 
 @Controller('constructions')
-@UseGuards(TokenGuard)
+@UseGuards(TokenGuard, BanGuard)
 export class ConstructionsController {
   constructor(private readonly constructionsService: ConstructionsService) {}
 

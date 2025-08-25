@@ -11,13 +11,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { TokenGuard } from 'src/orders/guards/token.guard';
+import { BanGuard } from 'src/users/guards/ban.guard';
 import { CreateProblemDto } from './dto/create-problem.dto';
 import { ProblemQuery } from './dto/problems-query.dto';
 import { UpdateProblemDto } from './dto/update-problem.dto';
 import { ProblemsService } from './problems.service';
 
 @Controller('problems')
-@UseGuards(TokenGuard)
+@UseGuards(TokenGuard, BanGuard)
 export class ProblemsController {
   constructor(private readonly problemsService: ProblemsService) {}
 
