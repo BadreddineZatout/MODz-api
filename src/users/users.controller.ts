@@ -45,14 +45,8 @@ export class UsersController {
     return this.usersService.login(data);
   }
 
-  @Get('users/:id')
-  @UseGuards(AuthGuard, BanGuard)
-  getUser(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.getUser(id);
-  }
-
   @Post('/users/create-profile')
-  @UseGuards(AuthGuard, BanGuard)
+  @UseGuards(AuthGuard)
   createProfile(
     @Body()
     data: CreateProfileDto,
@@ -69,6 +63,12 @@ export class UsersController {
       data.user_id,
       data.data as CreateEmployeeProfileDto,
     );
+  }
+
+  @Get('users/:id')
+  @UseGuards(AuthGuard, BanGuard)
+  getUser(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.getUser(id);
   }
 
   @Patch('/users/update-email/:id')
