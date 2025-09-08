@@ -8,8 +8,15 @@ import { UpdateProblemDto } from './dto/update-problem.dto';
 export class ProblemsService {
   constructor(private prisma: PrismaService) {}
   async create(createProblemDto: CreateProblemDto) {
-    const { order_id, construction_id } = createProblemDto;
-    if (!order_id && !construction_id) {
+    if (!createProblemDto.client_id && !createProblemDto.employee_id) {
+      throw new HttpException(
+        {
+          message: 'Client or employee id is required',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (!createProblemDto.order_id && !createProblemDto.construction_id) {
       throw new HttpException(
         {
           message: 'You should choose an order or a construction job',

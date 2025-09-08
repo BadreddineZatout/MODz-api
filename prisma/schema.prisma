@@ -27,36 +27,35 @@ model Client {
   last_name     String
   phone         String
   status        Status         @default(PENDING)
-  Order         Order[]
-  profile       ProfileUser?
   constructions Construction[]
+  Order         Order[]
   problems      Problem[]
+  profile       ProfileUser?
   ratings       Rating[]
 
   @@map("clients")
 }
 
 model Employee {
-  id                    Int      @id @default(autoincrement())
+  id                    Int            @id @default(autoincrement())
   first_name            String
   last_name             String
   phone                 String
+  is_active             Boolean
+  status                Status         @default(PENDING)
+  national_id           String?
+  can_work_construction Boolean        @default(false)
+  type                  WorkType       @default(INDIVIDUAL)
   latitude              Float?
   longitude             Float?
-  is_active             Boolean
-  status                Status   @default(PENDING)
-  national_id           String?
-  type                  WorkType @default(INDIVIDUAL)
-  can_work_construction Boolean  @default(false)
-
-  categories    Category[]     @relation("category_employee")
-  offers        Offer[]
-  orders        Order[]
-  profile       ProfileUser?
-  media         Image[]        @relation("employeetoimage")
-  problems      Problem[]
-  constructions Construction[] @relation("construction_employee")
-  ratings       Rating[]
+  offers                Offer[]
+  orders                Order[]
+  problems              Problem[]
+  profile               ProfileUser?
+  ratings               Rating[]
+  categories            Category[]     @relation("category_employee")
+  constructions         Construction[] @relation("construction_employee")
+  media                 Image[]        @relation("employeetoimage")
 
   @@map("employees")
 }
@@ -79,13 +78,13 @@ model Category {
   description      String         @db.Text
   urgent           Boolean        @default(false)
   for_construction Boolean        @default(false)
-  employees        Employee[]     @relation("category_employee")
   items            Item[]
   Order            Order[]
   Provider         Provider[]
+  constructions    Construction[] @relation("category_construction")
+  employees        Employee[]     @relation("category_employee")
   job_types        JobType[]      @relation("category_jobtype")
   media            Image[]        @relation("categorytoimage")
-  constructions    Construction[] @relation("category_construction")
 
   @@map("categories")
 }
@@ -187,8 +186,8 @@ model Item {
   category_id   Int
   job_type_id   Int?
   unit          String             @default("unit")
-  orders        ItemOrder[]
   constructions ConstructionItem[]
+  orders        ItemOrder[]
   category      Category           @relation(fields: [category_id], references: [id], onDelete: Cascade)
   job_type      JobType?           @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
 
@@ -208,20 +207,19 @@ model Order {
   status        OrderStatus @default(PENDING)
   is_urgent     Boolean     @default(false)
   accepted_at   DateTime?
-  started_at    DateTime?
-  code          Int?
   employee_id   Int?
   cancel_reason String?     @db.Text
+  code          Int?
+  started_at    DateTime?
   latitude      Float?
   longitude     Float?
-
-  items    ItemOrder[]
-  offers   Offer[]
-  category Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  client   Client      @relation(fields: [client_id], references: [id], onDelete: Cascade)
-  employee Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)
-  job_type JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
-  problems Problem[]
+  items         ItemOrder[]
+  offers        Offer[]
+  category      Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  client        Client      @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  employee      Employee?   @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  job_type      JobType     @relation(fields: [job_type_id], references: [id], onDelete: Cascade)
+  problems      Problem[]
 
   @@index([category_id], map: "orders_category_id_fkey")
   @@index([client_id], map: "orders_client_id_fkey")
@@ -258,25 +256,25 @@ model Offer {
 }
 
 model Construction {
-  id                Int               @id @default(autoincrement())
+  id                Int                @id @default(autoincrement())
   client_id         Int
-  construction_type ConstructionType?
-  description       String?           @db.Text
+  description       String?            @db.Text
   date              DateTime
   hour              String
-  type              WorkType?
-  periority         Int               @default(1)
-  status            OrderStatus       @default(PENDING)
+  status            OrderStatus        @default(PENDING)
   accepted_at       DateTime?
+  periority         Int                @default(1)
+  type              WorkType?
+  construction_type ConstructionType?
   latitude          Float?
   longitude         Float?
+  items             ConstructionItem[]
+  client            Client             @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  problems          Problem[]
+  categories        Category[]         @relation("category_construction")
+  employees         Employee[]         @relation("construction_employee")
 
-  client     Client             @relation(fields: [client_id], references: [id], onDelete: Cascade)
-  categories Category[]         @relation("category_construction")
-  items      ConstructionItem[]
-  problems   Problem[]
-  employees  Employee[]         @relation("construction_employee")
-
+  @@index([client_id], map: "constructions_client_id_fkey")
   @@map("constructions")
 }
 
@@ -284,37 +282,42 @@ model ConstructionItem {
   item_id         Int
   construction_id Int
   quantity        Int          @default(1)
-  item            Item         @relation(fields: [item_id], references: [id], onDelete: Cascade)
   construction    Construction @relation(fields: [construction_id], references: [id], onDelete: Cascade)
+  item            Item         @relation(fields: [item_id], references: [id], onDelete: Cascade)
 
   @@id([item_id, construction_id])
+  @@index([construction_id], map: "construction_item_construction_id_fkey")
   @@map("construction_item")
 }
 
 model Problem {
-  id              Int      @id @default(autoincrement())
-  client_id       Int
-  employee_id     Int
-  report_date     DateTime @default(now())
+  id              Int           @id @default(autoincrement())
+  client_id       Int?
+  employee_id     Int?
+  report_date     DateTime      @default(now())
   order_id        Int?
   construction_id Int?
-  description     String   @db.Text
+  tag             String?
+  description     String        @db.Text
   reporter        Reporter
-  is_treated      Boolean  @default(false)
+  is_treated      Boolean       @default(false)
+  client          Client?       @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  construction    Construction? @relation(fields: [construction_id], references: [id], onDelete: Cascade)
+  employee        Employee?     @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  order           Order?        @relation(fields: [order_id], references: [id], onDelete: Cascade)
 
-  client       Client        @relation(fields: [client_id], references: [id], onDelete: Cascade)
-  employee     Employee      @relation(fields: [employee_id], references: [id], onDelete: Cascade)
-  order        Order?        @relation(fields: [order_id], references: [id], onDelete: Cascade)
-  construction Construction? @relation(fields: [construction_id], references: [id], onDelete: Cascade)
-
+  @@index([client_id], map: "problems_client_id_fkey")
+  @@index([construction_id], map: "problems_construction_id_fkey")
+  @@index([employee_id], map: "problems_employee_id_fkey")
+  @@index([order_id], map: "problems_order_id_fkey")
   @@map("problems")
 }
 
 model Pack {
   id            Int            @id @default(autoincrement())
   name          String         @unique
-  price         Float?         @default(0.0)
-  duration      Int            @default(1) //duration per month
+  price         Float?         @default(0)
+  duration      Int            @default(1)
   order_limit   Int?
   description   String?        @db.Text
   subscriptions Subscription[]
@@ -329,9 +332,11 @@ model Subscription {
   starts_at DateTime?
   ends_at   DateTime?
   status    SubscriptionStatus @default(PENDING)
-  user      User?              @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  pack      Pack?              @relation(fields: [pack_id], references: [id], onDelete: Cascade)
+  pack      Pack               @relation(fields: [pack_id], references: [id], onDelete: Cascade)
+  user      User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
+  @@index([pack_id], map: "subscriptions_pack_id_fkey")
+  @@index([user_id], map: "subscriptions_user_id_fkey")
   @@map("subscriptions")
 }
 
@@ -355,15 +360,16 @@ model Message {
 }
 
 model Rating {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   client_id   Int
   employee_id Int
   score       Int
   comment     String?
+  client      Client   @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  employee    Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
 
-  client   Client   @relation(fields: [client_id], references: [id], onDelete: Cascade)
-  employee Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
-
+  @@index([client_id], map: "ratings_client_id_fkey")
+  @@index([employee_id], map: "ratings_employee_id_fkey")
   @@map("ratings")
 }
 
@@ -388,10 +394,10 @@ model media {
   disk                  String    @db.VarChar(255)
   conversions_disk      String?   @db.VarChar(255)
   size                  BigInt    @db.UnsignedBigInt
-  manipulations         Json
-  custom_properties     Json
-  generated_conversions Json
-  responsive_images     Json
+  manipulations         String    @db.LongText
+  custom_properties     String    @db.LongText
+  generated_conversions String    @db.LongText
+  responsive_images     String    @db.LongText
   order_column          Int?      @db.UnsignedInt
   created_at            DateTime? @db.Timestamp(0)
   updated_at            DateTime? @db.Timestamp(0)
@@ -472,7 +478,7 @@ model activity_log {
   subject_id   BigInt?   @db.UnsignedBigInt
   causer_type  String?   @db.VarChar(255)
   causer_id    BigInt?   @db.UnsignedBigInt
-  properties   Json?
+  properties   String?   @db.LongText
   batch_uuid   String?   @db.Char(36)
   created_at   DateTime? @db.Timestamp(0)
   updated_at   DateTime? @db.Timestamp(0)

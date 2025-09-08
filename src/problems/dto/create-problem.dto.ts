@@ -15,11 +15,13 @@ import { ClientExists } from 'src/orders/decorators/client-exists.decorator';
 
 export class CreateProblemDto {
   @Transform(({ value }) => parseInt(value))
+  @IsOptional()
   @Min(1)
   @ClientExists()
   client_id: number;
 
   @Transform(({ value }) => parseInt(value))
+  @IsOptional()
   @Min(1)
   @EmployeeExists()
   employee_id: number;
@@ -36,8 +38,12 @@ export class CreateProblemDto {
   @ConstructionExists()
   construction_id: number;
 
+  @IsOptional()
   @IsString()
   description: string;
+
+  @IsString()
+  tag: string;
 
   @IsOptional()
   @IsDateString()
