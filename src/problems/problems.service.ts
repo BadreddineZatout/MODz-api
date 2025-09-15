@@ -16,14 +16,6 @@ export class ProblemsService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    if (!createProblemDto.order_id && !createProblemDto.construction_id) {
-      throw new HttpException(
-        {
-          message: 'You should choose an order or a construction job',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
     return await this.prisma.problem.create({
       data: createProblemDto,
       include: {
